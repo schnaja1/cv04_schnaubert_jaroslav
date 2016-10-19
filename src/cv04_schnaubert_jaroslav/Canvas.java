@@ -14,7 +14,7 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-
+ 
 public class Canvas {
 	private int x,y;
 	private JFrame frame;

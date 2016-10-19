@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 public class LineRenderer {
 	private BufferedImage img;
 	private int color; 
-	  
+	   
 	public LineRenderer(BufferedImage img, int color){
 		this.setImg(img);
 		this.setColor(color);

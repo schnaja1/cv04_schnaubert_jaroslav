@@ -4,8 +4,8 @@ import java.awt.image.BufferedImage;
 
 public class Circle {
 	private BufferedImage img;
-	private int color;
-	 
+	private int color; 
+	
 	public Circle(BufferedImage img, int color){
 		this.setImg(img);
 		this.setColor(color);
