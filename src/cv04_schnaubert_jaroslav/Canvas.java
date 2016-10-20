@@ -35,6 +35,7 @@ public class Canvas {
 		
 		img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		line = new LineRenderer(img);
+		SeedFill seedfill = new SeedFill(img);
 		//circle = new Circle(img);
 		frame.add(panel);
 		frame.pack();
@@ -44,18 +45,26 @@ public class Canvas {
 			@Override
 			public void mousePressed(MouseEvent e){
 				super.mousePressed(e);
-				x=e.getX();
-				y=e.getY();
-				//circle.draw(x, y, 50);
-				points.add(new Point(x,y));
+				if(e.getButton()==MouseEvent.BUTTON1){
+					x=e.getX();
+					y=e.getY();
+					//circle.draw(x, y, 50);
+					points.add(new Point(x,y));
+				}
 			}
 			@Override
 			public void mouseReleased(MouseEvent e){
 				super.mouseReleased(e);
 				clear(0x2f2f2f);
-				points.add(new Point(e.getX(),e.getY()));
-				line.draw(x,y,e.getX(),e.getY());
-				drawPolygon();
+				if(e.getButton()==MouseEvent.BUTTON1){
+					points.add(new Point(e.getX(),e.getY()));
+					line.draw(x,y,e.getX(),e.getY());
+					drawPolygon();
+				}
+				if(e.getButton()==MouseEvent.BUTTON3){
+					seedfill.fill(e.getX(), e.getY(),0xff0000);
+				}
+				present();
 				
 			}
 		};
@@ -65,6 +74,7 @@ public class Canvas {
 			public void mouseDragged(MouseEvent e) {
 				// TODO Auto-generated method stub
 				clear(0x2f2f2f);
+				drawPolygon();
 				line.setColor(0xffffff);
 				line.draw(x, y, e.getX(),e.getY());
 				present();
@@ -96,7 +106,6 @@ public class Canvas {
 				xB = (int) points.get(points.size()-1).getX();
 				yB = (int) points.get(points.size()-1).getY();
 				line.draw(xA, yA, xB, yB);
-				present();
 		}
 	}
 	
