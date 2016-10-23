@@ -21,7 +21,7 @@ public class Canvas {
 	private JPanel panel;
 	private BufferedImage img; 
 	private LineRenderer line;
-	//private Circle circle;  
+	private Circle circle;  
 	private List<Point> points = new ArrayList<Point>();
 	 
 	public Canvas(int width, int height){
@@ -36,7 +36,7 @@ public class Canvas {
 		img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		line = new LineRenderer(img);
 		SeedFill seedfill = new SeedFill(img);
-		//circle = new Circle(img);
+		circle = new Circle(img);
 		frame.add(panel);
 		frame.pack();
 		frame.setVisible(true);
@@ -49,7 +49,7 @@ public class Canvas {
 					x=e.getX();
 					y=e.getY();
 					//circle.draw(x, y, 50);
-					points.add(new Point(x,y));
+				//	points.add(new Point(x,y));
 				}
 			}
 			@Override
@@ -57,13 +57,15 @@ public class Canvas {
 				super.mouseReleased(e);
 				clear(0x2f2f2f);
 				if(e.getButton()==MouseEvent.BUTTON1){
-					points.add(new Point(e.getX(),e.getY()));
-					line.draw(x,y,e.getX(),e.getY());
-					drawPolygon();
+					//points.add(new Point(e.getX(),e.getY()));
+					// line.draw(x,y,e.getX(),e.getY());
+					//drawPolygon();
+					circle.draw(x, y, 50.0);
+					
 				}
-				if(e.getButton()==MouseEvent.BUTTON3){
+			/*	if(e.getButton()==MouseEvent.BUTTON3){
 					seedfill.fill(e.getX(), e.getY(),0xff0000);
-				}
+				}*/
 				present();
 				
 			}
@@ -74,9 +76,10 @@ public class Canvas {
 			public void mouseDragged(MouseEvent e) {
 				// TODO Auto-generated method stub
 				clear(0x2f2f2f);
-				drawPolygon();
-				line.setColor(0xffffff);
-				line.draw(x, y, e.getX(),e.getY());
+				//drawPolygon();
+			//	line.setColor(0xffffff);
+			//	line.draw(x, y, e.getX(),e.getY());
+			//	line.draw((int)points.get(0).getX(), (int)points.get(0).getY(), e.getX(),e.getY());
 				present();
 			}
 
