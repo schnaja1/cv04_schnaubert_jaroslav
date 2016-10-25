@@ -1,15 +1,12 @@
 package cv04_schnaubert_jaroslav;
 
+
 import java.awt.Point;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.List;
-
 public class Circle {
 	private BufferedImage img;
 	private int color; 
-	private List<Integer> listX = new ArrayList<Integer>();
-	private List<Integer> listY = new ArrayList<Integer>();
+	private int color2;
 	private LineRenderer line;
 	
 	
@@ -22,59 +19,97 @@ public class Circle {
 		this(img,0xffffff);
 	} 
 	 
-	public void draw(int sX, int sY, double r){
-		listX.clear();
-		listY.clear();
+	public int countDistance(int sX, int sY, int rX, int rY){
+		int x,y;
+		x = Math.abs(sX - rX);
+		y = Math.abs(sY - rY);
 		
-		listX.add(sX);
-		listY.add((int) (sY-r));
+		int distance = (int) Math.sqrt((x*x)+(y*y));
 		
-		double xA =  sX, yA = sY -r;
-		double xB, yB;
-		
-		while((xA != yA) && (xA < sX + r)){
-			xB = xA;
-			//yB = yA;
-			//xB = (int) listX.get(listX.size()-1);
-			xA =  xB + 1;
-			if(xA>r)
-			{
-				yA=  Math.sqrt(xA*xA-r*r);
-			}
-			else
-				yA =  Math.sqrt(r*r-xA*xA);	
-			listX.add((int)xA);
-			listY.add((int)yA);
-			System.out.println(xA + " " + yA);
-		}
-		drawPoints();
-		
-		
+		return distance;
 	}
 	
-
-	public void drawPoints(){
-		line = new LineRenderer(img);
-		int sizeX = listX.size()-1, sizeY = listY.size()-1;
-		if(sizeX==sizeY){
-			if(sizeX>1){
-				line.setColor(0xffff00);
-				int xA=0,yA=0,xB=0,yB=0;
-				for(int i = 0; i<sizeX-1;i++){
-					xA = listX.get(i);
-					yA = listY.get(i);
-					xB = listX.get(i+1);
-					yB = listY.get(i+1);
-					line.draw(xA, yA, xB, yB);
-				}
-				xA = (int) listX.get(0);
-				yA = (int) listY.get(0);
-				xB = (int) listX.get(sizeX-1);
-				yB = (int) listY.get(sizeY-1);
-				line.draw(xA, yA, xB, yB);
-			}
-		}
+	public Point findPointOnCircle(int sX, int sY, int radius, int x, int y){
+		int distance = countDistance(sX, sY, x, y);
+		int shift;
+		shift = Math.abs(distance - radius);
+		return new Point(sX + shift, sY + shift);
 	}
+	
+	/*public void drawCircleSector(int sX, int sY, int rX, int rY, int x, int y){
+		int radius = countDistance(sX, sY, rX, rY);
+		Point point = new Point(rX, rY);
+		Point point2 = findPointOnCircle(sX, sY, radius, x, y);
+		double alpha = 0;
+		int xA,yA;
+		while(alpha<360){
+			xA = (int) (sX + radius * Math.sin(alpha));
+			yA = (int) (sY + radius * Math.cos(alpha));
+			
+			if(((xA == point.getX() && (yA == point.getY())) || ((xA == point2.getX()) && yA == point2.getY()))){
+				if(color == 0xffff00){
+					color = color2;
+					color2 = 0xffff00;
+				}
+				else{
+					int color3 = color;
+					this.setColor(color2);
+					this.setColor2(color3);
+				}
+			}
+			
+			if((xA >= 0) && (yA >= 0) && (xA < 1000) && (yA < 750))
+			{
+				img.setRGB(xA, yA, color);
+			}
+			alpha+=0.01;
+		}
+	}*/
+			
+	
+	public void drawCircle(int sX, int sY, int rX, int rY){
+	
+		
+		line = new LineRenderer(img);
+		int radius = countDistance(sX, sY, rX, rY);
+		//int distance = (int) (2*(Math.sin(1)*radius));
+		
+		int xA,yA;
+		
+		int xB = (int) (sX + radius * Math.sin(0));
+		int yB = (int) (sY + radius * Math.cos(0));
+		
+		double alpha = 0;
+		
+		while(alpha<360){
+			xA = (int) (sX + radius * Math.sin(alpha));
+			yA = (int) (sY + radius * Math.cos(alpha));
+			
+	/*		if((xA >= 0) && (yA >= 0) && (xA < 1000) && (yA < 750))
+			{
+				//line.draw(xA, yA, xB, yB);
+				img.setRGB(xA, yA, color);
+			}*/
+			
+			
+			if((xA >= 0) && (xB >= 0) && (yA >= 0) && (yB >= 0) && (xA < 1000) && (xB < 1000) && (yA < 750) && (yB < 750))
+			{
+				line.draw(xA, yA, xB, yB);
+				
+			}
+			xB = xA;
+			yB = yA;
+			alpha+=0.01;
+		}
+		
+		xA = (int) (sX + radius * Math.sin(359));
+		yA = (int) (sY + radius * Math.cos(359));
+		
+		if((xA >= 0) && (xB >= 0) && (yA >= 0) && (yB >= 0) && (xA < 1000) && (xB < 1000) && (yA < 750) && (yB < 750))
+		line.draw(xA, yA, xB, yB);
+		 
+	}
+	
 
 
 	public BufferedImage getImg() {
@@ -91,6 +126,14 @@ public class Circle {
 
 	public void setColor(int color) {
 		this.color = color;
+	}
+
+	public int getColor2() {
+		return color2;
+	}
+
+	public void setColor2(int color2) {
+		this.color2 = color2;
 	}
 
 

@@ -16,13 +16,15 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
  
 public class Canvas {
-	private int x,y;
+	private int x,y, rX, rY;
 	private JFrame frame;
 	private JPanel panel;
 	private BufferedImage img; 
 	private LineRenderer line;
 	private Circle circle;  
 	private List<Point> points = new ArrayList<Point>();
+//	private boolean firstClick = true;
+	private boolean circleMode = false;
 	 
 	public Canvas(int width, int height){
 		frame = new JFrame(); 
@@ -35,7 +37,7 @@ public class Canvas {
 		
 		img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		line = new LineRenderer(img);
-		SeedFill seedfill = new SeedFill(img);
+	//	SeedFill seedfill = new SeedFill(img);
 		circle = new Circle(img);
 		frame.add(panel);
 		frame.pack();
@@ -45,24 +47,42 @@ public class Canvas {
 			@Override
 			public void mousePressed(MouseEvent e){
 				super.mousePressed(e);
-				if(e.getButton()==MouseEvent.BUTTON1){
-					x=e.getX();
-					y=e.getY();
-					//circle.draw(x, y, 50);
-				//	points.add(new Point(x,y));
-				}
-			}
+				x=e.getX();
+				y=e.getY();
+				if(e.getButton()==MouseEvent.BUTTON1)
+					if(circleMode==true)
+						circleMode=false;
+					if(points.size()==0)
+						points.add(new Point(x,y));
+					if(points.size()==0)
+							points.add(new Point(x,y));
+				if(e.getButton()==MouseEvent.BUTTON3)
+					if(circleMode==false)
+						circleMode=true;
+		}
 			@Override
 			public void mouseReleased(MouseEvent e){
 				super.mouseReleased(e);
 				clear(0x2f2f2f);
 				if(e.getButton()==MouseEvent.BUTTON1){
-					//points.add(new Point(e.getX(),e.getY()));
-					// line.draw(x,y,e.getX(),e.getY());
-					//drawPolygon();
-					circle.draw(x, y, 50.0);
-					
+					points.add(new Point(e.getX(),e.getY()));
+					drawPolygon();
+					if(circleMode==true){
+						circleMode=false;
+					}
 				}
+				
+				if(e.getButton()==MouseEvent.BUTTON3){
+					points.clear();
+					rX=e.getX();
+					rY=e.getY();
+					circle.drawCircle(x, y, rX, rY);
+				//	circle.drawCircleSector(x, y, rX, rY, e.getX(), e.getY());
+					if(circleMode==false){
+						circleMode=true;
+					}
+				}
+
 			/*	if(e.getButton()==MouseEvent.BUTTON3){
 					seedfill.fill(e.getX(), e.getY(),0xff0000);
 				}*/
@@ -74,18 +94,25 @@ public class Canvas {
 		MouseMotionListener mb = new MouseMotionListener(){
 			@Override
 			public void mouseDragged(MouseEvent e) {
-				// TODO Auto-generated method stub
 				clear(0x2f2f2f);
-				//drawPolygon();
-			//	line.setColor(0xffffff);
-			//	line.draw(x, y, e.getX(),e.getY());
-			//	line.draw((int)points.get(0).getX(), (int)points.get(0).getY(), e.getX(),e.getY());
+				
+				if(circleMode==false){
+					drawPolygon();
+					line.setColor(0xffffff);
+					line.draw((int)(points.get(points.size()-1).getX()), (int)(points.get(points.size()-1).getY()), e.getX(),e.getY());
+					line.draw((int)points.get(0).getX(), (int)points.get(0).getY(), e.getX(),e.getY());
+				}
+				
+				if(circleMode==true){
+					circle.drawCircle(x, y, e.getX(), e.getY());
+				}
 				present();
 			}
 
 			@Override
 			public void mouseMoved(MouseEvent e) {
-				// TODO Auto-generated method stub
+				//circle.drawCircleSector(x, y, rX, rY, e.getX(), e.getY());
+				present();
 			}
 
 		};
