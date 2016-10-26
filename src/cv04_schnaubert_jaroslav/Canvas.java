@@ -23,8 +23,9 @@ public class Canvas {
 	private LineRenderer line;
 	private Circle circle;  
 	private List<Point> points = new ArrayList<Point>();
-//	private boolean firstClick = true;
 	private boolean circleMode = false;
+	private int clickCount = 0;
+//	private boolean circleSegmentMode = false;
 	 
 	public Canvas(int width, int height){
 		frame = new JFrame(); 
@@ -42,23 +43,58 @@ public class Canvas {
 		frame.add(panel);
 		frame.pack();
 		frame.setVisible(true);
-		
 		MouseAdapter ma = new MouseAdapter(){
 			@Override
 			public void mousePressed(MouseEvent e){
 				super.mousePressed(e);
-				x=e.getX();
-				y=e.getY();
 				if(e.getButton()==MouseEvent.BUTTON1)
-					if(circleMode==true)
+					//x=e.getX();
+				//	y=e.getY();
+					if(circleMode==true){					
+						clickCount=0;
+						x=e.getX();
+						y=e.getY();
 						circleMode=false;
+					}
+					else if(circleMode == false){
+						x=e.getX();
+						y=e.getY();
+					}
+
 					if(points.size()==0)
 						points.add(new Point(x,y));
-					if(points.size()==0)
-							points.add(new Point(x,y));
-				if(e.getButton()==MouseEvent.BUTTON3)
+					//if(points.size()==0)
+						//	points.add(new Point(x,y));
+				if(e.getButton()==MouseEvent.BUTTON3){
+					clear(0x2f2f2f);
+					clickCount++;
+					System.out.println(clickCount);
+					if(clickCount == 1){
+						x=e.getX();
+						y=e.getY();
+						}
+					if(clickCount == 2){
+						System.out.println("tralaa");
+						rX=e.getX();
+						rY=e.getY();
+						circle.drawCircle(x, y, rX, rY, 0, 2*Math.PI);
+						}
+					if (clickCount == 3){
+						clickCount=0;
+						int xC = e.getX();
+						int yC = e.getY();
+						double startAngle = Math.atan2(rX - x, rY - y);
+						double endAngle = Math.atan2(xC - x, yC - y);
+						circle.drawCircle(x, y, rX, rY, startAngle, endAngle);
+					}
 					if(circleMode==false)
+					{
 						circleMode=true;
+						points.clear();
+					}
+					present();
+				}
+
 		}
 			@Override
 			public void mouseReleased(MouseEvent e){
@@ -67,27 +103,8 @@ public class Canvas {
 				if(e.getButton()==MouseEvent.BUTTON1){
 					points.add(new Point(e.getX(),e.getY()));
 					drawPolygon();
-					if(circleMode==true){
-						circleMode=false;
-					}
+					present();
 				}
-				
-				if(e.getButton()==MouseEvent.BUTTON3){
-					points.clear();
-					rX=e.getX();
-					rY=e.getY();
-					circle.drawCircle(x, y, rX, rY);
-				//	circle.drawCircleSector(x, y, rX, rY, e.getX(), e.getY());
-					if(circleMode==false){
-						circleMode=true;
-					}
-				}
-
-			/*	if(e.getButton()==MouseEvent.BUTTON3){
-					seedfill.fill(e.getX(), e.getY(),0xff0000);
-				}*/
-				present();
-				
 			}
 		};
 		
@@ -103,16 +120,26 @@ public class Canvas {
 					line.draw((int)points.get(0).getX(), (int)points.get(0).getY(), e.getX(),e.getY());
 				}
 				
-				if(circleMode==true){
-					circle.drawCircle(x, y, e.getX(), e.getY());
-				}
 				present();
 			}
 
 			@Override
 			public void mouseMoved(MouseEvent e) {
-				//circle.drawCircleSector(x, y, rX, rY, e.getX(), e.getY());
-				present();
+				if((circleMode==true)&&(clickCount == 1 )){
+					clear(0x2f2f2f);
+					circle.drawCircle(x, y, e.getX(), e.getY(), 0, 2*Math.PI);
+					present();
+				}
+				if((circleMode==true) && (clickCount == 2)){
+					clear(0x2f2f2f);				
+					int xC = e.getX();
+					int yC = e.getY();
+					double startAngle = Math.atan2(rX - x, rY - y);
+					double endAngle = Math.atan2(xC - x, yC - y);
+
+					circle.drawCircle(x, y, rX, rY, startAngle, endAngle);
+					present();
+				}
 			}
 
 		};
@@ -138,6 +165,7 @@ public class Canvas {
 				line.draw(xA, yA, xB, yB);
 		}
 	}
+
 	
 	public void present(){
 		if(panel.getGraphics() != null)

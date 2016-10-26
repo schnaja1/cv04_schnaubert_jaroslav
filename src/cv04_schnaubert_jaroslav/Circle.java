@@ -30,84 +30,37 @@ public class Circle {
 	}
 	
 	public Point findPointOnCircle(int sX, int sY, int radius, int x, int y){
+
 		int distance = countDistance(sX, sY, x, y);
 		int shift;
 		shift = Math.abs(distance - radius);
-		return new Point(sX + shift, sY + shift);
+		return new Point(sX + distance - shift, sY + distance - shift);
 	}
 	
-	/*public void drawCircleSector(int sX, int sY, int rX, int rY, int x, int y){
-		int radius = countDistance(sX, sY, rX, rY);
-		Point point = new Point(rX, rY);
-		Point point2 = findPointOnCircle(sX, sY, radius, x, y);
-		double alpha = 0;
-		int xA,yA;
-		while(alpha<360){
-			xA = (int) (sX + radius * Math.sin(alpha));
-			yA = (int) (sY + radius * Math.cos(alpha));
-			
-			if(((xA == point.getX() && (yA == point.getY())) || ((xA == point2.getX()) && yA == point2.getY()))){
-				if(color == 0xffff00){
-					color = color2;
-					color2 = 0xffff00;
-				}
-				else{
-					int color3 = color;
-					this.setColor(color2);
-					this.setColor2(color3);
-				}
-			}
-			
-			if((xA >= 0) && (yA >= 0) && (xA < 1000) && (yA < 750))
-			{
-				img.setRGB(xA, yA, color);
-			}
-			alpha+=0.01;
-		}
-	}*/
 			
 	
-	public void drawCircle(int sX, int sY, int rX, int rY){
-	
-		
+	public void drawCircle(int sX, int sY, int rX, int rY, double alpha, double end){
 		line = new LineRenderer(img);
 		int radius = countDistance(sX, sY, rX, rY);
-		//int distance = (int) (2*(Math.sin(1)*radius));
+		double xA,yA;
+		double xB = (sX + radius * Math.sin(alpha-0.01));
+		double yB = (sY + radius * Math.cos(alpha-0.01));
+		if(alpha > end){
+			alpha -= 2* Math.PI;
+		}
 		
-		int xA,yA;
-		
-		int xB = (int) (sX + radius * Math.sin(0));
-		int yB = (int) (sY + radius * Math.cos(0));
-		
-		double alpha = 0;
-		
-		while(alpha<360){
-			xA = (int) (sX + radius * Math.sin(alpha));
-			yA = (int) (sY + radius * Math.cos(alpha));
-			
-	/*		if((xA >= 0) && (yA >= 0) && (xA < 1000) && (yA < 750))
-			{
-				//line.draw(xA, yA, xB, yB);
-				img.setRGB(xA, yA, color);
-			}*/
-			
+		while(alpha<=end){
+			xA =  (sX + radius * Math.sin(alpha));
+			yA =  (sY + radius * Math.cos(alpha));
 			
 			if((xA >= 0) && (xB >= 0) && (yA >= 0) && (yB >= 0) && (xA < 1000) && (xB < 1000) && (yA < 750) && (yB < 750))
 			{
-				line.draw(xA, yA, xB, yB);
-				
+				line.draw((int) xA, (int)yA, (int)xB,(int) yB);	
 			}
 			xB = xA;
 			yB = yA;
 			alpha+=0.01;
-		}
-		
-		xA = (int) (sX + radius * Math.sin(359));
-		yA = (int) (sY + radius * Math.cos(359));
-		
-		if((xA >= 0) && (xB >= 0) && (yA >= 0) && (yB >= 0) && (xA < 1000) && (xB < 1000) && (yA < 750) && (yB < 750))
-		line.draw(xA, yA, xB, yB);
-		 
+		}		 
 	}
 	
 
