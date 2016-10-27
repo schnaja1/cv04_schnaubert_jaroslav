@@ -1,5 +1,7 @@
 package cv04_schnaubert_jaroslav;
 
+
+
 import java.awt.image.BufferedImage;
 
 public class LineRenderer {
@@ -31,49 +33,6 @@ public class LineRenderer {
 		this.img = img;
 	}
 	
-	public void antialise(int x, int y, boolean a){
-
-		
-		
-		
-		
-		
-	//	if(a==true){
-	//		if(img.getRGB(x-1, y-1)==color){
-			/*	img.setRGB((x-1)-1, (y), color - 500);
-				img.setRGB((x-1)-2, (y), color - 500);
-				img.setRGB((x-1)-3, (y), color - 500);
-				img.setRGB((x-1)-4, (y), color - 500);				
-				img.setRGB((x-1)-5, (y), color - 500);				
-				img.setRGB((x-1)-6, (y), color - 500);			
-				img.setRGB((x-1)-7, (y), color - 500);
-				System.out.println("ss");
-				for(int i = 1; i < 1000; i++){
-					img.setRGB((x-1)-i, (y), 0xf00fff);
-				}
-				
-
-			//	img.setRGB(x, (y-1), color - 500);
-			//	img.setRGB((x-1)-1, (y-1), color - 500);
-			}
-			if(img.getRGB(x, y-1)==color){
-				for(int i = 1; i < 1000; i++){
-					img.setRGB((x), (y)-i, 0xffff00);
-				}
-				/*img.setRGB(x, y , color - 500);
-				img.setRGB(x, (y-1)-1, color - 500);
-				
-			}
-			if(img.getRGB(x-1, y)==color){/*
-				img.setRGB(x-1, y, color - 500);
-				img.setRGB((x-1)-1, y, color - 500);
-				for(int i = 1; i < 1000; i++){
-					img.setRGB((x-1)-i, (y), 0xffff00);
-				
-				}
-			}
-		//}*/
-	}
 
 	public void draw(int xA, int yA, int xB, int yB) {	
 		
@@ -116,7 +75,6 @@ public class LineRenderer {
 			while ((xA<=xB) && (yA<=yB))
 			{
 				img.setRGB(xA, yA, color);
-				antialise(xA, yA, true);
 				if(err>0){
 					xA+=1;
 					err-=dy;
