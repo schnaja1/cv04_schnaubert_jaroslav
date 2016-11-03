@@ -36,7 +36,7 @@ public class Canvas {
 		panel = new JPanel();
 		panel.setPreferredSize(new Dimension(width, height));
 		img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-		int bgColor = img.getRGB(0, 0);
+		int bgColor = img.getRGB(1, 1);
 		line = new LineRenderer(img);
 		SeedFill seedFill = new SeedFill(img, 0xff0000);
 		circle = new Circle(img);
@@ -48,9 +48,9 @@ public class Canvas {
 			public void mousePressed(MouseEvent e){
 				super.mousePressed(e);
 				if(e.getButton()==MouseEvent.BUTTON1){
-					seedFill.fill(e.getX(), e.getY(), bgColor, line.getColor());
+					//seedFill.fill(e.getX(), e.getY(), bgColor, line.getColor());
 					present();
-				/*	//x=e.getX();
+					//x=e.getX();
 					//y=e.getY();
 					if(circleMode==true){					
 						clickCount=0;
@@ -66,10 +66,11 @@ public class Canvas {
 					if(points.size()==0)
 						points.add(new Point(x,y));
 					//if(points.size()==0)
-						//	points.add(new Point(x,y));*/
+						//	points.add(new Point(x,y));
 				}
 				if(e.getButton()==MouseEvent.BUTTON3){
-					clear(0x2f2f2f);
+					seedFill.fill(e.getX(), e.getY(), bgColor, line.getColor());
+				/*	clear(0x2f2f2f);
 					clickCount++;
 					if(clickCount == 1){
 						x=e.getX();
@@ -93,19 +94,19 @@ public class Canvas {
 						circleMode=true;
 						points.clear();
 					}
-					present();
+					present();*/
 				}
 
 		}
 			@Override
 			public void mouseReleased(MouseEvent e){
 				super.mouseReleased(e);
-			/*	clear(0x2f2f2f);
+				clear(0x2f2f2f);
 				if(e.getButton()==MouseEvent.BUTTON1){
 					points.add(new Point(e.getX(),e.getY()));
 					drawPolygon();
 					present();
-				}*/
+				}
 			}
 		};
 		
@@ -113,21 +114,21 @@ public class Canvas {
 			@Override
 			public void mouseDragged(MouseEvent e) {
 				
-				/*if(circleMode==false){
-				 * clear(0x2f2f2f);
+				if(e.getButton()==MouseEvent.BUTTON1){
+					clear(0x2f2f2f);
 					drawPolygon();
 					line.setColor(0xffffff);
 					line.draw((int)(points.get(points.size()-1).getX()), (int)(points.get(points.size()-1).getY()), e.getX(),e.getY());
 					line.draw((int)points.get(0).getX(), (int)points.get(0).getY(), e.getX(),e.getY());
-					present()
+					present();
 				}
 				
-				;*/
+				;
 			}
 
 			@Override
 			public void mouseMoved(MouseEvent e) {
-				if((circleMode==true)&&(clickCount == 1 )){
+			/*	if((circleMode==true)&&(clickCount == 1 )){
 					clear(0x2f2f2f);
 					circle.drawCircle(x, y, e.getX(), e.getY(), 0, 2*Math.PI);
 					present();
@@ -141,7 +142,7 @@ public class Canvas {
 
 					circle.drawCircle(x, y, rX, rY, startAngle, endAngle);
 					present();
-				}
+				}*/
 			}
 
 		};
