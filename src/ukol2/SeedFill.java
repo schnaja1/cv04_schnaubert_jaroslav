@@ -6,8 +6,16 @@ public class SeedFill extends Filler{
 	private boolean first = true;
 	private int firstY;
 	
-	
+	public SeedFill(BufferedImage img) {
+		super(img);
+
+	}
 	public SeedFill(BufferedImage img, int color){
+		super(img,color);
+	}
+	
+	
+/*	public SeedFill(BufferedImage img, int color){
 		this.img=img;
 		this.color=color;
 	}
@@ -15,7 +23,7 @@ public class SeedFill extends Filler{
 	public SeedFill(BufferedImage img) {
 		this(img,0xFFFFFF);
 	}
-	
+	*/
 	//DU zprovoznit
 	public void fill(int x, int y, int backgroundColor, int borderColor){
 		if(first == true){
@@ -26,7 +34,6 @@ public class SeedFill extends Filler{
 		int bigX = x+1;
 		boolean makeYLower = true;
 		
-
 		System.out.println(backgroundColor);
 		System.out.println(img.getRGB(x, y));
 		if(img.getRGB(x, y)==backgroundColor){

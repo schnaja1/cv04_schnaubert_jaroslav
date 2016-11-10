@@ -21,8 +21,11 @@ public class Canvas {
 	private JPanel panel;
 	private BufferedImage img; 
 	private LineRenderer line;
-	private List<Point> points = new ArrayList<Point>();
-	 
+	//private List<Point> points = new ArrayList<Point>();
+	private PolyLine points;
+	 /*
+	  * DU doprogramovat
+	  */
 	public Canvas(int width, int height){
 		frame = new JFrame(); 
 		frame.setTitle("Projekt 1");
@@ -48,12 +51,12 @@ public class Canvas {
 					x=e.getX();
 					y=e.getY();
 					if(points.size()==0)
-						points.add(new Point(x,y));
+						points.add(x,y);
 				}
 				if(e.getButton()==MouseEvent.BUTTON3){
 					clear(0x2f2f2f);
 					//seedFill.fill(e.getX(), e.getY(), bgColor, line.getColor());
-					scanLine.fill(points);
+			//		scanLine.fill(points);
 					drawPolygon();
 					present();
 				}
@@ -64,7 +67,7 @@ public class Canvas {
 				super.mouseReleased(e);
 				clear(0x2f2f2f);
 				if(e.getButton()==MouseEvent.BUTTON1){
-					points.add(new Point(e.getX(),e.getY()));
+					points.add(e.getX(),e.getY());
 					drawPolygon();
 					present();
 				}
