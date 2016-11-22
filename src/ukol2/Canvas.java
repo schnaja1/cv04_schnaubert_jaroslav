@@ -1,63 +1,199 @@
 package ukol2;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.List;
 
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
- 
+
+import transforms.Point2D;
+
 public class Canvas {
-	private int x,y;
+	public static final int WIDTH = 1000;
+	public static final int HEIGHT = 500;
+
 	private JFrame frame;
-	private JPanel panel;
-	private BufferedImage img; 
+	private static JPanel panel1,panel2;
+	private static BufferedImage img; 
+	
 	private LineRenderer line;
-	//private List<Point> points = new ArrayList<Point>();
-	private PolyLine points;
-	 /*
-	  * DU doprogramovat
-	  */
-	public Canvas(int width, int height){
+	private PolyLine polyLine;
+	
+	private boolean fillWithSeedFill;
+	private int angle, space;
+
+	public Canvas(){
 		frame = new JFrame(); 
-		frame.setTitle("Projekt 1");
-		frame.setResizable(true);
+		frame.setTitle("Projekt 2");
+		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setLayout(new BorderLayout());
 		
-		panel = new JPanel();
-		panel.setPreferredSize(new Dimension(width, height));
-		img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-	//	int bgColor = img.getRGB(1, 1);
+		img = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		line = new LineRenderer(img);
-	//	SeedFill seedFill = new SeedFill(img, 0xff0000);
-		ScanLineFiller scanLine= new ScanLineFiller(img, 0x00ff00);;
-		frame.add(panel);
+		polyLine = new PolyLine(line);
+		SeedFill seedFill = new SeedFill(img);
+		ScanLineFiller scanLine =  new ScanLineFiller(img, 0x00ffff);
+	
+		fillWithSeedFill=true;
+
+		JRadioButton seedJButton = new JRadioButton();
+		seedJButton.setSelected(true);
+		seedJButton.setBounds(20,20, 25, 25);
+		
+		JLabel seedJLabel = new JLabel();
+		seedJLabel.setBounds(50,20, 150, 25);
+		seedJLabel.setText("Vyplnit pomocí SeedFill");
+		
+		JRadioButton scanJButton = new JRadioButton();
+		scanJButton.setSelected(false);
+		scanJButton.setBounds(20, 50, 25, 25);
+		
+		JLabel scanJLabel = new JLabel();
+		scanJLabel.setBounds(50,50, 200, 25);
+		scanJLabel.setText("Vyplnit pomocí ScanLine");
+		
+		ButtonGroup group = new ButtonGroup();
+		group.add(seedJButton);
+		group.add(scanJButton);
+		
+		JCheckBox linesInPolygon = new JCheckBox();
+		linesInPolygon.setBounds(30,90,25,25);
+		linesInPolygon.setSelected(false);
+		
+		JLabel linesInPolygonJLabel = new JLabel();
+		linesInPolygonJLabel.setText("Vyšrafovat");
+		linesInPolygonJLabel.setBounds(60,90,100,25);
+		
+		SpinnerModel spaceSpinnerModel = new SpinnerNumberModel(5,1,20,1);
+		JSpinner spaceJSpinner = new JSpinner(spaceSpinnerModel);
+		spaceJSpinner.setBounds(30, 130, 50, 25);
+		spaceJSpinner.setEnabled(false);
+		
+		JLabel spaceBetweenLinesJLabel = new JLabel();
+		spaceBetweenLinesJLabel.setBounds(90,130, 200, 25);
+		spaceBetweenLinesJLabel.setText("Rozdíl mezi šrafami");
+		
+		SpinnerModel angleSpinnerModel = new SpinnerNumberModel(5,0,360,1);
+		JSpinner angleJSpinner = new JSpinner(angleSpinnerModel);
+		angleJSpinner.setBounds(30, 160, 50, 25);
+		angleJSpinner.setEnabled(false);
+
+		JLabel angleOfLinesJLabel = new JLabel();
+		angleOfLinesJLabel.setBounds(90,160, 200, 25);
+		angleOfLinesJLabel.setText("Úhel šraf");
+		
+		JButton confirm = new JButton();
+		confirm.setText("Confirm changes");
+		confirm.setBounds(25, 200, 175,50);
+		
+		JButton clearCanvas = new JButton();
+		clearCanvas.setText("Clear");
+		clearCanvas.setBounds(25, 270, 175, 50);
+		
+		panel1 = new JPanel();
+		panel1.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+		
+		panel2 = new JPanel();
+		panel2.setPreferredSize(new Dimension(225,HEIGHT));
+		panel2.setLayout(null);
+		panel2.add(seedJButton);
+		panel2.add(seedJLabel);
+		panel2.add(scanJButton);
+		panel2.add(scanJLabel);
+		panel2.add(linesInPolygon);
+		panel2.add(linesInPolygonJLabel);
+		panel2.add(spaceJSpinner);
+		panel2.add(spaceBetweenLinesJLabel);
+		panel2.add(angleJSpinner);
+		panel2.add(angleOfLinesJLabel);
+		panel2.add(confirm);
+		panel2.add(clearCanvas);
+
+		frame.add(panel1,BorderLayout.CENTER);
+		frame.add(panel2,BorderLayout.EAST);
 		frame.pack();
 		frame.setVisible(true);
+		
+		clearCanvas.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+			//	clear(0x2f2f2f);
+				polyLine.clear();
+				present();
+			}
+		});
+		
+		linesInPolygon.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(linesInPolygon.isSelected()){
+					spaceJSpinner.setEnabled(true);
+					angleJSpinner.setEnabled(true);
+				}
+				else{
+					spaceJSpinner.setEnabled(false);
+					angleJSpinner.setEnabled(false);
+				}
+			}
+		});
+		
+		confirm.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(seedJButton.isSelected()){
+					fillWithSeedFill=true;
+				}
+				else{
+					fillWithSeedFill=false;
+					if(linesInPolygon.isSelected()){
+						angle = (int) angleJSpinner.getValue();
+						space = (int) spaceJSpinner.getValue();
+					}
+					else {
+						angle = 0;
+						space = 1;
+					}
+				}
+			}
+		});
 		
 		MouseAdapter ma = new MouseAdapter(){
 			@Override
 			public void mousePressed(MouseEvent e){
 				super.mousePressed(e);
-				if(e.getButton()==MouseEvent.BUTTON1){
-					x=e.getX();
-					y=e.getY();
-					if(points.size()==0)
-						points.add(x,y);
-				}
+				if(e.getButton()==MouseEvent.BUTTON1)
+					if(polyLine.size()==0)
+						polyLine.add(e.getX(),e.getY());
 				if(e.getButton()==MouseEvent.BUTTON3){
 					clear(0x2f2f2f);
-					//seedFill.fill(e.getX(), e.getY(), bgColor, line.getColor());
-			//		scanLine.fill(points);
-					drawPolygon();
+					if(fillWithSeedFill){
+						polyLine.draw();
+						seedFill.fill(e.getX(), e.getY());
+					}
+					else
+						scanLine.fill(polyLine,angle,space);
+					polyLine.draw();
 					present();
 				}
 
@@ -67,8 +203,8 @@ public class Canvas {
 				super.mouseReleased(e);
 				clear(0x2f2f2f);
 				if(e.getButton()==MouseEvent.BUTTON1){
-					points.add(e.getX(),e.getY());
-					drawPolygon();
+					polyLine.add(e.getX(),e.getY());
+					polyLine.draw();
 					present();
 				}
 			}
@@ -76,54 +212,29 @@ public class Canvas {
 		
 		MouseMotionListener mb = new MouseMotionListener(){
 			@Override
-			public void mouseDragged(MouseEvent e) {
-				
+			public void mouseDragged(MouseEvent e) {	
 				if(SwingUtilities.isLeftMouseButton(e)){
 					clear(0x2f2f2f);
-					drawPolygon();
+					polyLine.draw();
 					line.setColor(0xffffff);
-					line.draw((int)(points.get(points.size()-1).getX()), (int)(points.get(points.size()-1).getY()), e.getX(),e.getY());
-					line.draw((int)points.get(0).getX(), (int)points.get(0).getY(), e.getX(),e.getY());
+					line.draw(polyLine.get(polyLine.size()-1),new Point2D(e.getX(),e.getY()));
+					line.draw(polyLine.get(0),new Point2D(e.getX(),e.getY()));
 					present();
 				}
 			}
-
+			
 			@Override
 			public void mouseMoved(MouseEvent e) {
-	
+		
 			}
-
 		};
-		panel.addMouseListener(ma);
-		panel.addMouseMotionListener(mb);
-	}
-	
-	public void drawPolygon(){
-		if(points.size()>1){
-				line.setColor(0xffff00);
-				int xA=0,yA=0,xB=0,yB=0;
-				for(int i = 0; i<points.size()-1;i++){
-					xA = (int) points.get(i).getX();
-					yA = (int) points.get(i).getY();
-					xB = (int) points.get(i+1).getX();
-					yB = (int) points.get(i+1).getY();
-					line.draw(xA, yA, xB, yB);
-				}
-				xA = (int) points.get(0).getX();
-				yA = (int) points.get(0).getY();
-				xB = (int) points.get(points.size()-1).getX();
-				yB = (int) points.get(points.size()-1).getY();
-				line.draw(xA, yA, xB, yB);
-		}
+		panel1.addMouseListener(ma);
+		panel1.addMouseMotionListener(mb);
 	}
 
-	
-	public void present(){
-		if(panel.getGraphics() != null)
-			panel.getGraphics().drawImage(img, 0, 0, null);
-	}
-	public void start(){
-		present();
+	public static void present(){
+		if(panel1.getGraphics() != null)
+			panel1.getGraphics().drawImage(img, 0, 0, null);
 	}
 
 	public void clear(int color) {
@@ -133,18 +244,15 @@ public class Canvas {
 	}
 	
 	public static void main(String[] args) {
-		Canvas canvas = new Canvas(1000,750);
+		new Canvas();
 		SwingUtilities.invokeLater(() -> {
 			SwingUtilities.invokeLater(() -> {
 				SwingUtilities.invokeLater(() -> {
 					SwingUtilities.invokeLater(() -> {
-						canvas.start();
+						Canvas.present();
 					});
 				});
 			});
 		});
 	}
-	
-
-
 }

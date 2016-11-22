@@ -1,76 +1,68 @@
 package ukol2;
 
+import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class SeedFill extends Filler{
-	private boolean first = true;
-	private int firstY;
-	
-	public SeedFill(BufferedImage img) {
-		super(img);
+	List<Point> points;
+	private int design [][];
 
-	}
-	public SeedFill(BufferedImage img, int color){
-		super(img,color);
-	}
-	
-	
-/*	public SeedFill(BufferedImage img, int color){
-		this.img=img;
-		this.color=color;
-	}
-	
 	public SeedFill(BufferedImage img) {
-		this(img,0xFFFFFF);
+		this(img, 0xffffff, 0xff0000);
+	
 	}
-	*/
-	//DU zprovoznit
-	public void fill(int x, int y, int backgroundColor, int borderColor){
-		if(first == true){
-			first=false;
-			firstY=y;
-		}
-		int smallX = x;
-		int bigX = x+1;
-		boolean makeYLower = true;
+	
+	public SeedFill(BufferedImage img, int color1, int color2){
+		super(img);
+		points = new ArrayList<>();
+		design = new int[][]{
+			{color1,color1,color1,color1,color1,color1,color1,color1,color1},
+			{color1,color1,color1,color1,color1,color1,color1,color1,color1},
+			{color1,color1,color1,color1,color2,color1,color1,color1,color1},
+			{color1,color1,color1,color2,color2,color2,color1,color1,color1},
+			{color1,color1,color2,color2,color2,color2,color2,color1,color1},
+			{color1,color2,color2,color2,color2,color2,color2,color2,color1},
+			{color1,color1,color2,color2,color2,color2,color2,color1,color1},
+			{color1,color1,color1,color2,color2,color2,color1,color1,color1},
+			{color1,color1,color1,color1,color2,color1,color1,color1,color1},
+			{color1,color1,color1,color1,color1,color1,color1,color1,color1},
+			{color1,color1,color1,color1,color1,color1,color1,color1,color1}
+			};
+	}
+	
+	public boolean checkPointPosition(Point point){
+		return ((point.getX()<0)||(point.getY()<0)||(point.getX()>Canvas.WIDTH)||(point.getY()>Canvas.HEIGHT));
+	}
+	
+	public int getColor(Point point){
+		return design[(int)point.getY() % design.length][(int)point.getX() % design[0].length];
+	}
+	
+	public void spreadSeed(Point point){
+		points.add(new Point((int) point.getX()+1, (int) point.getY()));
+		points.add(new Point((int) point.getX()-1, (int) point.getY()));
+		points.add(new Point((int) point.getX(), (int) point.getY()+1));
+		points.add(new Point((int) point.getX(), (int) point.getY()-1));
+	}
+	
+	public void fill(int x, int y){
+		points.add(new Point(x,y));	
 		
-		System.out.println(backgroundColor);
-		System.out.println(img.getRGB(x, y));
-		if(img.getRGB(x, y)==backgroundColor){
-			System.out.println("projdu");
-			while((smallX>0)&&(img.getRGB(smallX, y)!=borderColor)){
-					img.setRGB(smallX, y, color);
-					smallX--;
-				}
-			while((bigX<1000)&&(img.getRGB(bigX, y)!=borderColor)){
-				
-					img.setRGB(bigX, y, color);
-					bigX++;
-				}
-			if(makeYLower = true)
-				if(y-1<1)
-					makeYLower=false;
-				else{
-					if(img.getRGB(x, y-1)==backgroundColor){
-						fill(x, y-1, backgroundColor, borderColor);
-					}
-				}
-			if(makeYLower = false)
-				if(y+1>749)
-					first=true;
-				else
-				{
-					if(img.getRGB(x, firstY+1)==backgroundColor){
-						firstY++;
-						fill(x, firstY, backgroundColor, borderColor);
-						
-					}
-				}
-			
-		}
+		int previousColor = img.getRGB(x, y);
 		
-		/*if(img.getRGB(x, y)==backgroundColor){
-			img.setRGB(x, y, color);
-		}*/
+		while(points.size()>0){
+			Point point = points.get(0);				
+			if(!checkPointPosition(point))
+				if(img.getRGB((int)point.getX(),(int) point.getY() ) == previousColor){
+					img.setRGB((int)point.getX(),(int) point.getY(), getColor(point));
+					spreadSeed(point);
+					if(point.getX() % 20 == 0)
+						Canvas.present();
+				}
+				points.remove(point);
+		}
 	}
 }

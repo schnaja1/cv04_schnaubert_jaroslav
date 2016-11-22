@@ -1,7 +1,5 @@
 package ukol2;
 
-import java.awt.Point;
-
 import transforms.Point2D;
 
 public class SLine {
@@ -43,14 +41,15 @@ public class SLine {
 		}
 	}
 	
-	public boolean isIntersection(int y){
-		return(point1.getY()<=y && point2.getY() > y);	
+	public boolean isIntersection(double y){
+		return (y >= point1.getY() && y < point2.getY());
 	}
 	
-	public int getIntersection(int y){
-		double dx = (point2.getX() - point1.getX());
+	
+	public double getIntersection(double y){
+		double dx = point2.getX() - point1.getX();
 		double dy = point2.getY() - point1.getY();
 
-		return (int) Math.round(point1.getX() + (dx / dy) * (y - point1.getY()));
+		return  point1.getX() + (dx / dy) * (y - point1.getY());
 	}
 }
