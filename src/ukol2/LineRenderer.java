@@ -52,7 +52,6 @@ public class LineRenderer {
 	}
 	
 	public void draw(Point2D point1, Point2D point2){
-		
 		int xA = (int) (point1.getX()),
 			xB = (int) (point2.getX()),
 			yA = (int) (point1.getY()),

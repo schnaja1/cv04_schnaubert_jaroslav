@@ -36,7 +36,6 @@ public class Canvas {
 	private LineRenderer line;
 	private PolyLine polyLine;
 	
-	private boolean fillWithSeedFill;
 	private int angle, space;
 
 	public Canvas(){
@@ -51,23 +50,29 @@ public class Canvas {
 		polyLine = new PolyLine(line);
 		SeedFill seedFill = new SeedFill(img);
 		ScanLineFiller scanLine =  new ScanLineFiller(img, 0x00ffff);
-	
-		fillWithSeedFill=true;
 
 		JRadioButton seedJButton = new JRadioButton();
 		seedJButton.setSelected(true);
-		seedJButton.setBounds(20,20, 25, 25);
+		seedJButton.setBounds(20,20, 20, 20);
 		
 		JLabel seedJLabel = new JLabel();
-		seedJLabel.setBounds(50,20, 150, 25);
+		seedJLabel.setBounds(50,20, 150, 20);
 		seedJLabel.setText("Vyplnit pomocí SeedFill");
+		
+		JCheckBox usePattern = new JCheckBox();
+		usePattern.setBounds(30,40,20,20);
+		usePattern.setSelected(false);
+		
+		JLabel usePatternJLabel = new JLabel();
+		usePatternJLabel.setBounds(55 ,40, 150, 20);
+		usePatternJLabel.setText("Použít vzor pro vyplnìní");
 		
 		JRadioButton scanJButton = new JRadioButton();
 		scanJButton.setSelected(false);
-		scanJButton.setBounds(20, 50, 25, 25);
+		scanJButton.setBounds(20, 70, 25, 25);
 		
 		JLabel scanJLabel = new JLabel();
-		scanJLabel.setBounds(50,50, 200, 25);
+		scanJLabel.setBounds(50,70, 200, 25);
 		scanJLabel.setText("Vyplnit pomocí ScanLine");
 		
 		ButtonGroup group = new ButtonGroup();
@@ -75,6 +80,7 @@ public class Canvas {
 		group.add(scanJButton);
 		
 		JCheckBox linesInPolygon = new JCheckBox();
+		linesInPolygon.setEnabled(false);
 		linesInPolygon.setBounds(30,90,25,25);
 		linesInPolygon.setSelected(false);
 		
@@ -82,32 +88,29 @@ public class Canvas {
 		linesInPolygonJLabel.setText("Vyšrafovat");
 		linesInPolygonJLabel.setBounds(60,90,100,25);
 		
-		SpinnerModel spaceSpinnerModel = new SpinnerNumberModel(5,1,20,1);
+		SpinnerModel spaceSpinnerModel = new SpinnerNumberModel(5,5,20,1);
 		JSpinner spaceJSpinner = new JSpinner(spaceSpinnerModel);
-		spaceJSpinner.setBounds(30, 130, 50, 25);
+		spaceJSpinner.setBounds(30, 120, 50, 25);
 		spaceJSpinner.setEnabled(false);
 		
 		JLabel spaceBetweenLinesJLabel = new JLabel();
-		spaceBetweenLinesJLabel.setBounds(90,130, 200, 25);
+		spaceBetweenLinesJLabel.setBounds(90,120, 200, 25);
 		spaceBetweenLinesJLabel.setText("Rozdíl mezi šrafami");
 		
 		SpinnerModel angleSpinnerModel = new SpinnerNumberModel(5,0,360,1);
 		JSpinner angleJSpinner = new JSpinner(angleSpinnerModel);
-		angleJSpinner.setBounds(30, 160, 50, 25);
+		angleJSpinner.setBounds(30, 150, 50, 25);
 		angleJSpinner.setEnabled(false);
 
 		JLabel angleOfLinesJLabel = new JLabel();
-		angleOfLinesJLabel.setBounds(90,160, 200, 25);
+		angleOfLinesJLabel.setBounds(90,150, 200, 25);
 		angleOfLinesJLabel.setText("Úhel šraf");
-		
-		JButton confirm = new JButton();
-		confirm.setText("Confirm changes");
-		confirm.setBounds(25, 200, 175,50);
-		
+
 		JButton clearCanvas = new JButton();
-		clearCanvas.setText("Clear");
-		clearCanvas.setBounds(25, 270, 175, 50);
+		clearCanvas.setText("Clear Canvas");
+		clearCanvas.setBounds(25, 400, 175, 50);
 		
+
 		panel1 = new JPanel();
 		panel1.setPreferredSize(new Dimension(WIDTH, HEIGHT));
 		
@@ -116,6 +119,8 @@ public class Canvas {
 		panel2.setLayout(null);
 		panel2.add(seedJButton);
 		panel2.add(seedJLabel);
+		panel2.add(usePattern);
+		panel2.add(usePatternJLabel);
 		panel2.add(scanJButton);
 		panel2.add(scanJLabel);
 		panel2.add(linesInPolygon);
@@ -124,7 +129,6 @@ public class Canvas {
 		panel2.add(spaceBetweenLinesJLabel);
 		panel2.add(angleJSpinner);
 		panel2.add(angleOfLinesJLabel);
-		panel2.add(confirm);
 		panel2.add(clearCanvas);
 
 		frame.add(panel1,BorderLayout.CENTER);
@@ -132,11 +136,33 @@ public class Canvas {
 		frame.pack();
 		frame.setVisible(true);
 		
+		angle = (int) angleJSpinner.getValue();
+		space = (int) spaceJSpinner.getValue();
+		
+
+	    ActionListener listenerOfRadioButtons = new ActionListener() {
+	        public void actionPerformed(ActionEvent actionEvent) {
+				if(seedJButton.isSelected()){
+					linesInPolygon.setEnabled(false);
+					linesInPolygon.setSelected(false);
+					usePattern.setEnabled(true);
+				}
+				else if(scanJButton.isSelected()){
+						linesInPolygon.setEnabled(true);
+						usePattern.setEnabled(false);
+						usePattern.setSelected(false);
+				}
+	        }
+	      };
+		
+
+		seedJButton.addActionListener(listenerOfRadioButtons);
+		scanJButton.addActionListener(listenerOfRadioButtons);
+	      
 		clearCanvas.addActionListener(new ActionListener(){
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-			//	clear(0x2f2f2f);
 				polyLine.clear();
 				present();
 			}
@@ -157,27 +183,6 @@ public class Canvas {
 			}
 		});
 		
-		confirm.addActionListener(new ActionListener(){
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				if(seedJButton.isSelected()){
-					fillWithSeedFill=true;
-				}
-				else{
-					fillWithSeedFill=false;
-					if(linesInPolygon.isSelected()){
-						angle = (int) angleJSpinner.getValue();
-						space = (int) spaceJSpinner.getValue();
-					}
-					else {
-						angle = 0;
-						space = 1;
-					}
-				}
-			}
-		});
-		
 		MouseAdapter ma = new MouseAdapter(){
 			@Override
 			public void mousePressed(MouseEvent e){
@@ -187,12 +192,21 @@ public class Canvas {
 						polyLine.add(e.getX(),e.getY());
 				if(e.getButton()==MouseEvent.BUTTON3){
 					clear(0x2f2f2f);
-					if(fillWithSeedFill){
+					if(seedJButton.isSelected()){
 						polyLine.draw();
-						seedFill.fill(e.getX(), e.getY());
+						seedFill.fill(e.getX(), e.getY(), usePattern.isSelected());
 					}
-					else
+					else{
+						if(linesInPolygon.isSelected()){
+							angle = (int) angleJSpinner.getValue();
+							space = (int) spaceJSpinner.getValue();
+						}
+						else {
+							angle = 0;
+							space = 1;
+						}
 						scanLine.fill(polyLine,angle,space);
+					}
 					polyLine.draw();
 					present();
 				}
@@ -228,8 +242,11 @@ public class Canvas {
 		
 			}
 		};
+
 		panel1.addMouseListener(ma);
 		panel1.addMouseMotionListener(mb);
+
+	
 	}
 
 	public static void present(){

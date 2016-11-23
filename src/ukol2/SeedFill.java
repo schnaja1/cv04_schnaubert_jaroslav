@@ -18,7 +18,7 @@ public class SeedFill extends Filler{
 	public SeedFill(BufferedImage img, int color1, int color2){
 		super(img);
 		points = new ArrayList<>();
-		design = new int[][]{
+	/*	design = new int[][]{
 			{color1,color1,color1,color1,color1,color1,color1,color1,color1},
 			{color1,color1,color1,color1,color1,color1,color1,color1,color1},
 			{color1,color1,color1,color1,color2,color1,color1,color1,color1},
@@ -30,25 +30,43 @@ public class SeedFill extends Filler{
 			{color1,color1,color1,color1,color2,color1,color1,color1,color1},
 			{color1,color1,color1,color1,color1,color1,color1,color1,color1},
 			{color1,color1,color1,color1,color1,color1,color1,color1,color1}
+			};*/
+		design = new int[][]{
+			{color1,color1,color1,color1,color1,color1,color1,color1,color1,color1,color1,color1},
+			{color1,color1,color1,color1,color1,color1,color1,color1,color1,color1,color1,color1},
+			{color1,color1,color1,color1,color1,color2,color2,color1,color1,color1,color1,color1},
+			{color1,color1,color1,color1,color2,color2,color2,color2,color1,color1,color1,color1},
+			{color1,color1,color1,color2,color2,color2,color2,color2,color2,color1,color1,color1},
+			{color1,color1,color2,color2,color2,color2,color2,color2,color2,color2,color1,color1},
+			{color1,color1,color2,color2,color2,color2,color2,color2,color2,color2,color1,color1},
+			{color1,color1,color1,color2,color2,color2,color2,color2,color2,color1,color1,color1},
+			{color1,color1,color1,color1,color2,color2,color2,color2,color1,color1,color1,color1},
+			{color1,color1,color1,color1,color1,color2,color2,color1,color1,color1,color1,color1},
+			{color1,color1,color1,color1,color1,color1,color1,color1,color1,color1,color1,color1},
+			{color1,color1,color1,color1,color1,color1,color1,color1,color1,color1,color1,color1}
 			};
 	}
 	
 	public boolean checkPointPosition(Point point){
-		return ((point.getX()<0)||(point.getY()<0)||(point.getX()>Canvas.WIDTH)||(point.getY()>Canvas.HEIGHT));
+		return ((point.getX()<0)||(point.getY()<0)||(point.getX()>=Canvas.WIDTH)||(point.getY()>=Canvas.HEIGHT));
 	}
 	
-	public int getColor(Point point){
-		return design[(int)point.getY() % design.length][(int)point.getX() % design[0].length];
+	public int getColor(Point point, boolean fillWithPattern){
+		if(fillWithPattern)
+			return design[(int)point.getY() % design.length][(int)point.getX() % design[0].length];
+		else
+			return design[0][0];
+		
 	}
 	
-	public void spreadSeed(Point point){
-		points.add(new Point((int) point.getX()+1, (int) point.getY()));
-		points.add(new Point((int) point.getX()-1, (int) point.getY()));
-		points.add(new Point((int) point.getX(), (int) point.getY()+1));
-		points.add(new Point((int) point.getX(), (int) point.getY()-1));
+	public void spreadSeed(Point point, int previousColor){
+			points.add(new Point((int) point.getX()+1, (int) point.getY()));
+			points.add(new Point((int) point.getX(), (int) point.getY()+1));
+			points.add(new Point((int) point.getX()-1, (int) point.getY()));
+			points.add(new Point((int) point.getX(), (int) point.getY()-1));
 	}
 	
-	public void fill(int x, int y){
+	public void fill(int x, int y, boolean fillWithPattern){
 		points.add(new Point(x,y));	
 		
 		int previousColor = img.getRGB(x, y);
@@ -57,12 +75,12 @@ public class SeedFill extends Filler{
 			Point point = points.get(0);				
 			if(!checkPointPosition(point))
 				if(img.getRGB((int)point.getX(),(int) point.getY() ) == previousColor){
-					img.setRGB((int)point.getX(),(int) point.getY(), getColor(point));
-					spreadSeed(point);
+					img.setRGB((int)point.getX(),(int) point.getY(), getColor(point,fillWithPattern));
+					spreadSeed(point, previousColor);
 					if(point.getX() % 20 == 0)
 						Canvas.present();
-				}
-				points.remove(point);
+					}
+			points.remove(point);
 		}
 	}
 }

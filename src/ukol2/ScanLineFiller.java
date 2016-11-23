@@ -70,7 +70,6 @@ public class ScanLineFiller extends Filler{
 			intersectionsX = sortListOfDoubles(intersectionsX);
 			for(int i = 0; i < intersectionsX.size(); i+=2)
 			{
-
 				Point2D point1 = new Point2D(intersectionsX.get(i),y);
 				Point2D point2 = new Point2D(intersectionsX.get((i + 1)),y);
 
@@ -78,6 +77,7 @@ public class ScanLineFiller extends Filler{
 				point2 = rotate(point2,(Math.toRadians(360-angle)));
 				
 				line.draw(point1, point2);
+			
 			}
 			intersectionsX.clear();
 		}			

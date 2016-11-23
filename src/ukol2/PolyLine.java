@@ -47,10 +47,6 @@ public class PolyLine {
 		return transformedPoints;
 	}
 	
-	public Point2D get(int index){
-		return points.get(index);
-	}
-	
 	public int size(){
 		return points.size();
 	}
@@ -66,5 +62,8 @@ public class PolyLine {
 				line.draw(points.get(i), points.get(i+1));
 			line.draw(points.get(0), points.get(points.size()-1));
 		}
+	}
+	public Point2D get(int index){
+		return points.get(index);
 	}
 }
