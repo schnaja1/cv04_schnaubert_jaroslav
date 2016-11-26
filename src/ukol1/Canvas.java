@@ -25,8 +25,6 @@ public class Canvas {
 	private List<Point> points = new ArrayList<Point>();
 	private boolean circleMode = false;
 	private int clickCount = 0;
-	private boolean circleSegmentMode = false;
-	 
 	public Canvas(int width, int height){
 		frame = new JFrame(); 
 		frame.setTitle("Projekt 1");
@@ -36,7 +34,6 @@ public class Canvas {
 		panel = new JPanel();
 		panel.setPreferredSize(new Dimension(width, height));
 		img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-		int bgColor = img.getRGB(1, 1);
 		line = new LineRenderer(img);
 		circle = new Circle(img);
 		frame.add(panel);
