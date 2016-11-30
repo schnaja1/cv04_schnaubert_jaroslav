@@ -46,8 +46,15 @@ public class ScanLineFiller extends Filler{
 		sLines = new ArrayList<>();
 		
 		List<Point2D> rotatedPoints = new ArrayList<>(); 
-		
-		rotatedPoints= points.rotate(Math.toRadians(angle));
+	
+		if(angle!=0){
+			rotatedPoints= points.rotate(Math.toRadians(angle));
+		}
+		else
+			for(int i = 0; i<points.size();i++){
+				rotatedPoints.add(points.get(i));
+			}
+
 	
 		double min = rotatedPoints.get(0).getY();
 		double max = min;
@@ -72,10 +79,10 @@ public class ScanLineFiller extends Filler{
 			{
 				Point2D point1 = new Point2D(intersectionsX.get(i),y);
 				Point2D point2 = new Point2D(intersectionsX.get((i + 1)),y);
-
+				if(angle!=0){
 				point1 = rotate(point1,(Math.toRadians(360-angle)));
 				point2 = rotate(point2,(Math.toRadians(360-angle)));
-				
+				}
 				line.draw(point1, point2);
 			
 			}
