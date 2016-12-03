@@ -28,7 +28,7 @@ public class Canvas {
 	
 	private LineRenderer line;
 
-	public Canvas(int width, int height){
+	public Canvas(){
 		frame = new JFrame(); 
 		frame.setTitle("Projekt 1");
 		frame.setResizable(false);
@@ -36,7 +36,7 @@ public class Canvas {
 		
 		panel1 = new JPanel();
 		panel1.setPreferredSize(new Dimension(WIDTH,HEIGHT));
-		img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		img = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		line = new LineRenderer(img);
 		frame.add(panel1);
 		frame.pack();
@@ -89,6 +89,7 @@ public class Canvas {
 	}
 	
 	public static void main(String[] args) {
+		new Canvas();
 		SwingUtilities.invokeLater(() -> {
 			SwingUtilities.invokeLater(() -> {
 				SwingUtilities.invokeLater(() -> {
