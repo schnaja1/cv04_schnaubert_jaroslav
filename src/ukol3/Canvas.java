@@ -3,20 +3,16 @@ package ukol3;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.List;
+
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import ukol2.LineRenderer;
-import ukol2.PolyLine;
  
 public class Canvas {
 	public static final int WIDTH = 1000;
@@ -27,8 +23,8 @@ public class Canvas {
 	private static BufferedImage img; 
 	
 	private LineRenderer line;
-
-	public Canvas(){
+	
+	public Canvas(int width, int height){
 		frame = new JFrame(); 
 		frame.setTitle("Projekt 1");
 		frame.setResizable(false);
@@ -36,7 +32,7 @@ public class Canvas {
 		
 		panel1 = new JPanel();
 		panel1.setPreferredSize(new Dimension(WIDTH,HEIGHT));
-		img = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+		img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		line = new LineRenderer(img);
 		frame.add(panel1);
 		frame.pack();
@@ -89,7 +85,6 @@ public class Canvas {
 	}
 	
 	public static void main(String[] args) {
-		new Canvas();
 		SwingUtilities.invokeLater(() -> {
 			SwingUtilities.invokeLater(() -> {
 				SwingUtilities.invokeLater(() -> {
