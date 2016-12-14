@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 
 import transforms.Mat4;
+import transforms.Point3D;
 
 public interface Renderable {
 	
@@ -18,4 +19,6 @@ public interface Renderable {
 	void setProj(Mat4 proj);
 
 	void setImage(BufferedImage img);
+	
+	boolean isPointProper(Point3D point);
 }

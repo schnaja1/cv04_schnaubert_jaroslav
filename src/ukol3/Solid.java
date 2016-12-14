@@ -9,9 +9,6 @@ public abstract class Solid {
 	protected List<Point3D> vertexBuffer;
 	protected List<Integer> indexBuffer;
 	
-/*	protected void draw(){
-		
-	}*/	
 	
 	public List<Point3D> getVertexBuffer() {
 		return vertexBuffer;
