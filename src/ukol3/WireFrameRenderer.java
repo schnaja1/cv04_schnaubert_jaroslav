@@ -16,6 +16,7 @@ public class WireFrameRenderer implements Renderable {
 	private Mat4 model;
 	private Mat4 proj;
 	private BufferedImage img;
+	private Graphics g;
 	
 	List<Color> colors;
 
@@ -44,7 +45,8 @@ public class WireFrameRenderer implements Renderable {
 		List<Point3D> points = solid.getVertexBuffer();
 		List<Integer> indexes = solid.getIndexBuffer();
 		
-		Graphics g = img.getGraphics();
+		if(g==null)
+			g = img.getGraphics();
 		
 		Mat4 matrix = model.mul(view.mul(proj));
 
@@ -66,10 +68,7 @@ public class WireFrameRenderer implements Renderable {
 			pointB = pointB.mul(matrix);
 			
 			
-	/*		System.out.println(pointA.getX() + " " + pointA.getY() + " " + pointA.getZ() + " " +pointA.getW());
-			System.out.println(pointB.getX() + " " + pointB.getY() + " " + pointB.getZ() + " " +pointB.getW());
-			System.out.println("\n");
-			*/
+
 			Optional<Vec3D> optVecA = pointA.dehomog();
 			Optional<Vec3D> optVecB = pointB.dehomog();
 			
@@ -82,15 +81,17 @@ public class WireFrameRenderer implements Renderable {
 			vecA = vecA.mul(new Vec3D(1,1,1)).add(new Vec3D(1,1,0)).mul(new Vec3D((0.5 * (img.getWidth() - 1)), (0.5 * (img.getHeight() - 1)), 1));
 			vecB = vecB.mul(new Vec3D(1,1,1)).add(new Vec3D(1,1,0)).mul(new Vec3D((0.5 * (img.getWidth() - 1)), (0.5 * (img.getHeight() - 1)), 1));
 	        
-		/*	
-			int xA =(int) (vecA.getX()+1)*(img.getWidth()-1)/2;
+			
+		/*	int xA =(int) (vecA.getX()+1)*(img.getWidth()-1)/2;
 			int yA =(int) (vecA.getY()+1)*(img.getHeight()-1)/2;
 			
 			int xB =(int) (vecB.getX()+1)*(img.getWidth()-1)/2;
 			int yB =(int) (vecB.getY()+1)*(img.getHeight()-1)/2;
 
 			g.drawLine(xA, yA, xB, yB);
-			*/		
+		*/
+			
+			if((vecA.getX()<100&&vecB.getX()<1000)||(vecA.getY()<1000&&vecB.getY()<1000)||(vecA.getX()>0&&vecB.getX()>0)||(vecA.getY()>0&&vecB.getY()>0))
 			g.drawLine((int) vecA.getX(), (int) vecA.getY(), (int) vecB.getX(),(int)  vecB.getY());
 			//System.out.println(xA + " " + yA + " " + xB + " " + yB);
 			
@@ -111,6 +112,7 @@ public class WireFrameRenderer implements Renderable {
 
 	@Override
 	public void draw(List<Solid> list) {
+		 g = img.getGraphics();
 		for(Solid solid : list)
 			draw(solid);
 	}

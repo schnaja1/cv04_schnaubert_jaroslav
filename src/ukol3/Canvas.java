@@ -63,14 +63,14 @@ public class Canvas {
 		img = new BufferedImage(panel1.getWidth(),panel1.getHeight(), BufferedImage.TYPE_INT_RGB);
 		camera = new Camera();
 		
-		solid.add(new Curve(0));
+	/*	solid.add(new Curve(0));
 		solid.add(new Curve(1));
 		solid.add(new Curve(2));
-		
+		*/
 		solid.add(new XYZ());
 		solid.add(new Cube());
 		solid.add(new Pyramid());
-	//	solid = cube;	
+		
 		renderer = new WireFrameRenderer(img);
 		
 		MouseAdapter ma = new MouseAdapter(){
@@ -92,30 +92,10 @@ public class Canvas {
 		MouseMotionListener mb = new MouseMotionListener(){
 			@Override
 			public void mouseDragged(MouseEvent e) {
-
-			//	int finalX = e.getX() - beginX;
-			//	int finalY = e.getY() - beginY;
-		/*		if(finalX < -5)
-					camera=camera.addAzimuth(-0.001);
-				if(finalX > 5)
-					camera=camera.addAzimuth(+0.001);
-				if(finalY < -5)
-					camera=camera.addZenith(-0.001);
-				if(finalY > 5)
-					camera=camera.addZenith(+0.001);
-			*/
 				camera=camera.addAzimuth((Math.PI / 1000) * (beginX - e.getX()));
 				camera=camera.addZenith((Math.PI / 1000) * (beginY - e.getY()));
 				beginX = e.getX();
 				beginY = e.getY();
-			/*double azimuth = camera.getAzimuth() + (e.getX() - beginX)/100;
-				double zenith = camera.getZenith() + (e.getY() - beginY)/100;
-				
-				camera=camera.withAzimuth(azimuth);
-				camera=camera.withZenith(zenith);
-				*/
-				
-				
 				
 				renderFrame(solid);
 			}
@@ -166,7 +146,7 @@ public class Canvas {
 					//paralelni
 					case KeyEvent.VK_X: renderer.setProj(new Mat4OrthoRH(8, 10.0 * HEIGHT / WIDTH, 1, 40)); break;
 					
-			//		case KeyEvent.VK_R: reset(); break;
+					case KeyEvent.VK_R: reset(); break;
 				}
 				renderFrame(solid);
 			}
@@ -192,7 +172,7 @@ public class Canvas {
 	}
 	private void reset(){
 		rotX = Math.PI / 2; rotY = 0; rotZ = Math.PI;
-		sizeX = 1; sizeY = 1; sizeZ = 1;
+		sizeX = 2; sizeY = 2; sizeZ = 2;
 		moveX = -5; moveY = -1.5; moveZ = -1.5;
 		renderer.setProj(new Mat4PerspRH(1, 1, 1, 100));
 		setCameraOptions();
@@ -202,12 +182,12 @@ public class Canvas {
 		//camera=camera.withPosition(new Vec3D(20, 20, 15));
 	//	camera=camera.withZenith(-Math.atan(15.0 / (20.0 * Math.sqrt(2.0))));
 	//	camera=camera.withAzimuth(5 * Math.PI / 4);
-		camera = new Camera(new Vec3D(0,0,0), 0,0, Math.PI/2, true);
-		
-		camera=camera.withPosition(new Vec3D(5,0,0));
+//		camera = new Camera(new Vec3D(0,0,0), 0,0, Math.PI/2, true);
+		camera = new Camera(new Vec3D(0,0,0), Math.PI/32,Math.PI/16, Math.PI/2, true);
+	//	camera=camera.withPosition(new Vec3D(5,0,0));
 //	camera=camera.addAzimuth(2.80);
 		//(new Vec3D(5, 3.5, 1.5));
-		camera=camera.withZenith(Math.PI);
+	//	camera=camera.withZenith(Math.PI);
 	//	camera=camera.withPosition(new Vec3D(8, 3.5, 1.5));
 		//camera=camera.backward(5);
 	}
