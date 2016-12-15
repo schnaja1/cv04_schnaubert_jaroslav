@@ -22,7 +22,7 @@ public class Curve extends Solid{
 			points[3]=new Point3D(0.625,0.5,0.625);
 			points[4]=new Point3D(0.75,0,0.75);
 			points[5]=new Point3D(1,1,1);
-		break;
+		break; 
 		case 1:
 			matrix=Cubic.COONS;
 			points[0]=new Point3D(1,0,0);

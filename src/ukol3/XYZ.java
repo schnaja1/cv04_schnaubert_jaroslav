@@ -16,7 +16,7 @@ public class XYZ extends Solid{
 	//Spojení krajních bodù jednotlivých èar se støedem se støedem
 	for(int i = 1; i < 4; i++){
 		indexBuffer.add(0); 
-		indexBuffer.add(i);
+		indexBuffer.add(i); 
 	}
 }
 }

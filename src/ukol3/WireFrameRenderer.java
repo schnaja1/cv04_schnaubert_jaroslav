@@ -25,7 +25,7 @@ public class WireFrameRenderer implements Renderable {
 		colors = new ArrayList<>();
 		colors.add(0,Color.RED);
 		colors.add(1,Color.black);
-		colors.add(2,Color.GREEN);
+		colors.add(2,Color.GREEN); 
 		colors.add(3,Color.black);
 		colors.add(4,Color.BLUE);
 		colors.add(5,Color.black);

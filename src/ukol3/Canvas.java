@@ -165,7 +165,7 @@ public class Canvas {
 		renderer.setModel(new Mat4Scale(sizeX, sizeY, sizeZ).mul(
 				new Mat4RotXYZ(rotX, rotY, rotZ)).mul(
 						new Mat4Transl(moveX, moveY, moveZ)));
-		renderer.setView(camera.getViewMatrix());
+		renderer.setView(camera.getViewMatrix()); 
 		renderer.draw(solid);	
 
 		present();
