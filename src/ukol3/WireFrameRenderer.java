@@ -17,27 +17,9 @@ public class WireFrameRenderer implements Renderable {
 	private Mat4 proj;
 	private BufferedImage img;
 	private Graphics g;
-	
-	List<Color> colors;
 
 	public WireFrameRenderer(BufferedImage img){
 		setImage(img);
-		colors = new ArrayList<>();
-		colors.add(0,Color.RED);
-		colors.add(1,Color.black);
-		colors.add(2,Color.GREEN); 
-		colors.add(3,Color.black);
-		colors.add(4,Color.BLUE);
-		colors.add(5,Color.black);
-		colors.add(6,Color.WHITE);
-		colors.add(7,Color.black);
-		colors.add(8,Color.YELLOW);
-		colors.add(9,Color.black);
-		colors.add(10,Color.YELLOW);
-		colors.add(11,Color.black);
-		colors.add(12,Color.YELLOW);
-		colors.add(13,Color.black);
-		colors.add(14,Color.YELLOW);
 	}
 	
 	@Override
@@ -47,23 +29,20 @@ public class WireFrameRenderer implements Renderable {
 		
 		if(g==null)
 			g = img.getGraphics();
-		
+		g.setColor(solid.getColor());
 		Mat4 matrix = model.mul(view.mul(proj));
 
 		for(int i = 0; i < indexes.size(); i+=2){
-			if(solid.getClass()==Curve.class)
-				g.setColor(Color.CYAN);
-			else if(solid.getClass()==XYZ.class)
-				g.setColor(colors.get(i));
-			else if(solid.getClass()==Cube.class)
-				g.setColor(colors.get(6));
-			else
-				g.setColor(colors.get(8));
-			
+			if(solid.getClass()==XYZ.class){
+				List<Color> colors = new ArrayList<>();
+				colors.add(Color.RED);
+				colors.add(Color.BLUE);
+				colors.add(Color.GREEN);
+				g.setColor(colors.get(i%3));
+			}
 			Point3D pointA = points.get(indexes.get(i));
 			Point3D pointB = points.get(indexes.get(i+1));
-		/*	if(!isPointProper(pointA)||!isPointProper(pointB))
-				continue;*/
+			
 			pointA = pointA.mul(matrix);
 			pointB = pointB.mul(matrix);
 			
@@ -77,10 +56,19 @@ public class WireFrameRenderer implements Renderable {
 			
 			Vec3D vecA = optVecA.get(),
 				  vecB = optVecB.get();
+			if(isVecProper(vecA)||isVecProper(vecB)){
 			
 			vecA = vecA.mul(new Vec3D(1,1,1)).add(new Vec3D(1,1,0)).mul(new Vec3D((0.5 * (img.getWidth() - 1)), (0.5 * (img.getHeight() - 1)), 1));
 			vecB = vecB.mul(new Vec3D(1,1,1)).add(new Vec3D(1,1,0)).mul(new Vec3D((0.5 * (img.getWidth() - 1)), (0.5 * (img.getHeight() - 1)), 1));
 			
+			/*if (
+					vecA.getX() < -1 || vecA.getX() > 1 ||
+					vecA.getY() < -1 || vecA.getY() > 1 ||
+					vecB.getX() < -1 || vecB.getX() > 1 ||
+					vecB.getY() < -1 || vecB.getY() > 1 ||
+					vecA.getZ() < 0 || vecA.getZ() > 1 ||
+					vecB.getZ() < 0 || vecB.getZ() > 1
+					) continue;
 	        
 			
 		/*	int xA =(int) (vecA.getX()+1)*(img.getWidth()-1)/2;
@@ -92,8 +80,9 @@ public class WireFrameRenderer implements Renderable {
 			g.drawLine(xA, yA, xB, yB);
 		*/
 			
-			if((vecA.getX()<1000&&vecB.getX()<1000)||(vecA.getY()<1000&&vecB.getY()<1000)||(vecA.getX()>0&&vecB.getX()>0)||(vecA.getY()>0&&vecB.getY()>0))
+		//	if((vecA.getX()<1000&&vecB.getX()<1000)||(vecA.getY()<1000&&vecB.getY()<1000)||(vecA.getX()>0&&vecB.getX()>0)||(vecA.getY()>0&&vecB.getY()>0))
 			g.drawLine((int) vecA.getX(), (int) vecA.getY(), (int) vecB.getX(),(int)  vecB.getY());
+			}
 			//System.out.println(xA + " " + yA + " " + xB + " " + yB);
 			
 		}		
@@ -140,11 +129,11 @@ public class WireFrameRenderer implements Renderable {
 		this.img = img;
 	}
 
+
 	@Override
-	public boolean isPointProper(Point3D point) {
-		return(point.getX() > -1 || point.getX() < 1 ||
-			   point.getY() > -1 || point.getY() < 1 ||
-			   point.getZ() > 0 || point.getZ() < 1 ||
-			   point.getW()!=0);
+	public boolean isVecProper(Vec3D vec) {
+		return 	(vec.getX() < -1 || vec.getX() > 1 ||
+				vec.getY() < -1 || vec.getY() > 1 ||
+				vec.getZ() < 0 || vec.getZ() > 1 );
 	}
 }

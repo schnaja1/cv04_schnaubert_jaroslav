@@ -9,14 +9,14 @@ import javax.swing.JPanel;
  * Je možné je vidìt v pravé èásti aplikace. n
  */
 
-public class Panel2 extends JPanel{
+public class LabelPanel extends JPanel{
 	
 	/**
 	 * Promìnná pøidaná kvùli vyskakujícímu warningu
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public Panel2(){
+	public LabelPanel(){
 		super();
 
 		Font font = new Font("Arial", Font.PLAIN, 12);

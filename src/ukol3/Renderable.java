@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 
 import transforms.Mat4;
-import transforms.Point3D;
+import transforms.Vec3D;
 
 public interface Renderable {
 	
@@ -20,5 +20,5 @@ public interface Renderable {
 
 	void setImage(BufferedImage img);
 	
-	boolean isPointProper(Point3D point);
+	boolean isVecProper(Vec3D vec);
 }

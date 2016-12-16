@@ -1,11 +1,16 @@
 package ukol3;
 
+import java.awt.Color;
 import java.util.ArrayList;
 
 import transforms.Point3D;
 
 public class Cube extends Solid {
-	
+
+	public Cube(Color color){
+		this();
+		this.color=color;
+	}
 	public Cube(){
 		vertexBuffer = new ArrayList<>();
 		indexBuffer = new ArrayList<>();

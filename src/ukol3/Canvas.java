@@ -32,7 +32,7 @@ public class Canvas {
 
 	private JFrame frame;
 	private static JPanel panel1;
-	private static Panel2 panel2;
+	private static LabelPanel panel2;
 	private Camera camera;
 	private static BufferedImage img; 
 	private List<Solid> solid = new ArrayList<>();
@@ -40,7 +40,7 @@ public class Canvas {
 	private double sizeX = 1, sizeY = 1, sizeZ = 1;
 	private double rotX, rotY, rotZ, moveX, moveY, moveZ;
 	private int beginX, beginY;
-	
+
 	public Canvas(){
 		frame = new JFrame(); 
 		frame.setTitle("Projekt 3");
@@ -52,7 +52,7 @@ public class Canvas {
 		panel1.setPreferredSize(new Dimension(WIDTH, HEIGHT));
 		
 	/*	panel2 = new JPanel();*/
-		panel2 = new Panel2();
+		panel2 = new LabelPanel();
 
 		panel2.setPreferredSize(new Dimension(200,HEIGHT));
 		panel2.setLayout(null);
@@ -65,28 +65,27 @@ public class Canvas {
 		img = new BufferedImage(panel1.getWidth(),panel1.getHeight(), BufferedImage.TYPE_INT_RGB);
 		camera = new Camera();
 		
-	solid.add(new Curve(0));
-		solid.add(new Curve(1));
-		solid.add(new Curve(2));
+		solid.add(new Curve(0,Color.CYAN));
+		solid.add(new Curve(1,Color.PINK));
+		solid.add(new Curve(2,Color.MAGENTA));
 		
 		solid.add(new XYZ());
-		solid.add(new Cube());
-		solid.add(new Pyramid());
+		solid.add(new Cube(Color.WHITE));
+		solid.add(new Pyramid(Color.YELLOW));
 		
 		renderer = new WireFrameRenderer(img);
+		resetView();
 		
 		MouseAdapter ma = new MouseAdapter(){
 			@Override
 			public void mousePressed(MouseEvent e){
-				super.mousePressed(e);
+
 				beginX = e.getX();
 				beginY = e.getY();
 
 			}
 			@Override
 			public void mouseReleased(MouseEvent e){
-				super.mouseReleased(e);
-			System.out.println(camera.getAzimuth() + " " + camera.getZenith());
 			}
 
 		};
@@ -100,7 +99,7 @@ public class Canvas {
 				beginX = e.getX();
 				beginY = e.getY();
 				
-				renderFrame(solid);
+				renderScene(solid);
 			}
 			
 
@@ -175,7 +174,7 @@ public class Canvas {
 							renderer.setProj(new Mat4OrthoRH(8, 10.0 * HEIGHT / WIDTH, 1, 40)); 
 							break;
 					case KeyEvent.VK_R: 
-							reset(); 
+							resetView(); 
 							break;
 					case KeyEvent.VK_ADD:
 							sizeX += 0.1; 
@@ -187,25 +186,17 @@ public class Canvas {
 							sizeY -= 0.1; 
 							sizeZ-=0.1; 
 							break;
-						
-						
-						
-						
-						//	case KeyEvent.VK_sADD: sizeX = sizeX+0.1; sizeY = sizeY+0.1; sizeZ = sizeZ+0.1; break;
-						//	case 109: sizeX = sizeX-0.1; sizeY = sizeY-0.1; sizeZ = sizeZ-0.1; break;
-
-
 				}
-				renderFrame(solid);
+				renderScene(solid);
 			}
 		};
 
-		reset();
+		
 		frame.addKeyListener(keyAdapter);
 		panel1.addMouseListener(ma);
 		panel1.addMouseMotionListener(mb);
 	}
-	private void renderFrame(List<Solid> solid){
+	private void renderScene(List<Solid> solid){
 		if(solid == null) return;
 		clear(0x2f2f2f);
 		
@@ -218,27 +209,17 @@ public class Canvas {
 
 		present();
 	}
-	private void reset(){
-		rotX = Math.PI / 2; rotY = 0; rotZ = Math.PI;
+	private void resetView(){
+		rotX = Math.PI /2; rotY = 0; rotZ = Math.PI;
 		sizeX = 3; sizeY = 3; sizeZ = 3;
 		moveX = -5; moveY = -1.5; moveZ = -1.5;
 		renderer.setProj(new Mat4PerspRH(1, 1, 1, 100));
-		setCameraOptions();
-		renderFrame(solid);
+		resetCamera();
+		renderScene(solid);
 	}
-	private void setCameraOptions(){
-		//camera=camera.withPosition(new Vec3D(20, 20, 15));
-	//	camera=camera.withZenith(-Math.atan(15.0 / (20.0 * Math.sqrt(2.0))));
-	//	camera=camera.withAzimuth(5 * Math.PI / 4);
-//		camera = new Camera(new Vec3D(0,0,0), 0,0, Math.PI/2, true);
-		camera = new Camera(new Vec3D(0,0,0), Math.PI/32,Math.PI/16, Math.PI/2, true);
-	//	camera=camera.withPosition(new Vec3D(5,0,0));
-		camera=camera.withAzimuth(0.03926990816987217);
-		camera=camera.withZenith(0.006283185307179653);
-	
-		//(new Vec3D(5, 3.5, 1.5));
-	//	camera=camera.addZenith(Math.PI);
-	//	camera=camera.withPosition(new Vec3D(8, 3.5, 1.5));
+	private void resetCamera(){
+		camera = new Camera(new Vec3D(0,1,2), Math.PI/32,Math.PI/32,-Math.PI/2, true);
+		camera=camera.backward(15);		
 	}
 	
 	

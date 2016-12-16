@@ -1,11 +1,17 @@
 package ukol3;
 
+import java.awt.Color;
 import java.util.ArrayList;
 
 import transforms.Point3D;
 
 public class Pyramid extends Solid {
-
+	
+	public Pyramid(Color color){
+		this();
+		this.color=color;
+	}
+	
 	public Pyramid(){
 		vertexBuffer = new ArrayList<>();
 		indexBuffer = new ArrayList<>();

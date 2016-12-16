@@ -1,11 +1,17 @@
 package ukol3;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import transforms.Cubic;
 import transforms.Mat4;
 import transforms.Point3D;
 
 public class Curve extends Solid{
+	
+	public Curve(int type, Color color) {
+		this(type);
+		this.color=color;
+	}
 	
 	public Curve(int type) {
 		vertexBuffer = new ArrayList<>();
