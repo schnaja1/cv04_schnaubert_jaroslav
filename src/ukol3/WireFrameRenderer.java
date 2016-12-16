@@ -15,11 +15,19 @@ public class WireFrameRenderer implements Renderable {
 	private Mat4 view;
 	private Mat4 model;
 	private Mat4 proj;
+	private Mat4 transformMatrix;
 	private BufferedImage img;
 	private Graphics g;
 
 	public WireFrameRenderer(BufferedImage img){
 		setImage(img);
+	}
+	
+	@Override
+	public void draw(List<Solid> list) {
+		 g = img.getGraphics();
+		for(Solid solid : list)
+			draw(solid);
 	}
 	
 	@Override
@@ -30,7 +38,8 @@ public class WireFrameRenderer implements Renderable {
 		if(g==null)
 			g = img.getGraphics();
 		g.setColor(solid.getColor());
-		Mat4 matrix = model.mul(view.mul(proj));
+		
+		transformMatrix = model.mul(view.mul(proj));
 
 		for(int i = 0; i < indexes.size(); i+=2){
 			if(solid.getClass()==XYZ.class){
@@ -43,71 +52,40 @@ public class WireFrameRenderer implements Renderable {
 			Point3D pointA = points.get(indexes.get(i));
 			Point3D pointB = points.get(indexes.get(i+1));
 			
-			pointA = pointA.mul(matrix);
-			pointB = pointB.mul(matrix);
-			
-			
-
-			Optional<Vec3D> optVecA = pointA.dehomog();
-			Optional<Vec3D> optVecB = pointB.dehomog();
-			
-			if(!optVecA.isPresent()||!optVecB.isPresent())
-				continue;
-			
-			Vec3D vecA = optVecA.get(),
-				  vecB = optVecB.get();
-			if(isVecProper(vecA)||isVecProper(vecB)){
-			
-			vecA = vecA.mul(new Vec3D(1,1,1)).add(new Vec3D(1,1,0)).mul(new Vec3D((0.5 * (img.getWidth() - 1)), (0.5 * (img.getHeight() - 1)), 1));
-			vecB = vecB.mul(new Vec3D(1,1,1)).add(new Vec3D(1,1,0)).mul(new Vec3D((0.5 * (img.getWidth() - 1)), (0.5 * (img.getHeight() - 1)), 1));
-			
-			/*if (
-					vecA.getX() < -1 || vecA.getX() > 1 ||
-					vecA.getY() < -1 || vecA.getY() > 1 ||
-					vecB.getX() < -1 || vecB.getX() > 1 ||
-					vecB.getY() < -1 || vecB.getY() > 1 ||
-					vecA.getZ() < 0 || vecA.getZ() > 1 ||
-					vecB.getZ() < 0 || vecB.getZ() > 1
-					) continue;
-	        
-			
-		/*	int xA =(int) (vecA.getX()+1)*(img.getWidth()-1)/2;
-			int yA =(int) (vecA.getY()+1)*(img.getHeight()-1)/2;
-			
-			int xB =(int) (vecB.getX()+1)*(img.getWidth()-1)/2;
-			int yB =(int) (vecB.getY()+1)*(img.getHeight()-1)/2;
-
-			g.drawLine(xA, yA, xB, yB);
-		*/
-			
-		//	if((vecA.getX()<1000&&vecB.getX()<1000)||(vecA.getY()<1000&&vecB.getY()<1000)||(vecA.getX()>0&&vecB.getX()>0)||(vecA.getY()>0&&vecB.getY()>0))
-			g.drawLine((int) vecA.getX(), (int) vecA.getY(), (int) vecB.getX(),(int)  vecB.getY());
-			}
-			//System.out.println(xA + " " + yA + " " + xB + " " + yB);
+			render(pointA, pointB);
 			
 		}		
-		//model mat4translate a je mozne *mat4scale
-		//proj persp - proj zorny uhel pi/4,1,0.01,100.. ort - jen 0.01,100
-		//view  new matview vec3d 5 -4 3.., -5 4 -3, new vec3d 0 1 0,
-		//transformace
-		
-		//4D -> 4D MVP
-		//clip w pro w > 0
-		//4D -> 3D dehomogenizace
-		//clip ZO
-		//3D -> 2D odstranime z
-		//viewPort transformace
-		//vykresleni drawLine - rasterizace
 	}
-
-	
 
 	@Override
-	public void draw(List<Solid> list) {
-		 g = img.getGraphics();
-		for(Solid solid : list)
-			draw(solid);
+	public void render(Point3D pointA, Point3D pointB) {
+
+		
+		pointA = pointA.mul(transformMatrix);
+		pointB = pointB.mul(transformMatrix);
+		
+		if(pointA.getW()<0||pointB.getW()<0)
+			return;
+		
+		Optional<Vec3D> optVecA = pointA.dehomog();
+		Optional<Vec3D> optVecB = pointB.dehomog();
+		
+		if(!optVecA.isPresent()||!optVecB.isPresent())
+			return;
+		
+		Vec3D vecA = optVecA.get(),
+			  vecB = optVecB.get();
+		
+		if(areVecProper(vecA, vecB)){
+		
+		vecA = vecA.mul(new Vec3D(1,1,1)).add(new Vec3D(1,1,0)).mul(new Vec3D((0.5 * (img.getWidth() - 1)), (0.5 * (img.getHeight() - 1)), 1));
+		vecB = vecB.mul(new Vec3D(1,1,1)).add(new Vec3D(1,1,0)).mul(new Vec3D((0.5 * (img.getWidth() - 1)), (0.5 * (img.getHeight() - 1)), 1));
+
+		if((vecA.getX()<1000&&vecB.getX()<1000)||(vecA.getY()<1000&&vecB.getY()<1000)||(vecA.getX()>0&&vecB.getX()>0)||(vecA.getY()>0&&vecB.getY()>0))
+		g.drawLine((int) vecA.getX(), (int) vecA.getY(), (int) vecB.getX(),(int)  vecB.getY());
+		}
 	}
+	
 
 	@Override
 	public void setModel(Mat4 model) {
@@ -129,11 +107,11 @@ public class WireFrameRenderer implements Renderable {
 		this.img = img;
 	}
 
-
 	@Override
-	public boolean isVecProper(Vec3D vec) {
-		return 	(vec.getX() < -1 || vec.getX() > 1 ||
-				vec.getY() < -1 || vec.getY() > 1 ||
-				vec.getZ() < 0 || vec.getZ() > 1 );
+	public boolean areVecProper(Vec3D a, Vec3D b) {
+		return !(Math.min(a.getX(), b.getX()) > 1.0f)||
+				(Math.max(a.getX(),b.getX()) < -1.0f);
 	}
+
+
 }

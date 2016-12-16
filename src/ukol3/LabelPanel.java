@@ -84,5 +84,10 @@ public class LabelPanel extends JPanel{
 		projOJLabel.setBounds(20, 260, 180, 14);
 		projOJLabel.setFont(font);
 		add(projOJLabel);
+		
+		JLabel resetOJLabel = new JLabel("Resetovat - R");
+		resetOJLabel.setBounds(20, 280, 180, 14);
+		resetOJLabel.setFont(font);
+		add(resetOJLabel);
 	}
 }
