@@ -80,6 +80,7 @@ public class WireFrameRenderer implements Renderable {
 			
 			vecA = vecA.mul(new Vec3D(1,1,1)).add(new Vec3D(1,1,0)).mul(new Vec3D((0.5 * (img.getWidth() - 1)), (0.5 * (img.getHeight() - 1)), 1));
 			vecB = vecB.mul(new Vec3D(1,1,1)).add(new Vec3D(1,1,0)).mul(new Vec3D((0.5 * (img.getWidth() - 1)), (0.5 * (img.getHeight() - 1)), 1));
+			
 	        
 			
 		/*	int xA =(int) (vecA.getX()+1)*(img.getWidth()-1)/2;
@@ -91,7 +92,7 @@ public class WireFrameRenderer implements Renderable {
 			g.drawLine(xA, yA, xB, yB);
 		*/
 			
-			if((vecA.getX()<100&&vecB.getX()<1000)||(vecA.getY()<1000&&vecB.getY()<1000)||(vecA.getX()>0&&vecB.getX()>0)||(vecA.getY()>0&&vecB.getY()>0))
+			if((vecA.getX()<1000&&vecB.getX()<1000)||(vecA.getY()<1000&&vecB.getY()<1000)||(vecA.getX()>0&&vecB.getX()>0)||(vecA.getY()>0&&vecB.getY()>0))
 			g.drawLine((int) vecA.getX(), (int) vecA.getY(), (int) vecB.getX(),(int)  vecB.getY());
 			//System.out.println(xA + " " + yA + " " + xB + " " + yB);
 			
@@ -109,6 +110,8 @@ public class WireFrameRenderer implements Renderable {
 		//viewPort transformace
 		//vykresleni drawLine - rasterizace
 	}
+
+	
 
 	@Override
 	public void draw(List<Solid> list) {

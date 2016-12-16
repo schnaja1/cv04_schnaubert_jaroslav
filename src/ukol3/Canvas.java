@@ -31,8 +31,8 @@ public class Canvas {
 	public static final int HEIGHT = 500;
 
 	private JFrame frame;
-	private static JPanel panel1,panel2;
-	
+	private static JPanel panel1;
+	private static Panel2 panel2;
 	private Camera camera;
 	private static BufferedImage img; 
 	private List<Solid> solid = new ArrayList<>();
@@ -51,8 +51,10 @@ public class Canvas {
 		panel1 = new JPanel();
 		panel1.setPreferredSize(new Dimension(WIDTH, HEIGHT));
 		
-		panel2 = new JPanel();
-		panel2.setPreferredSize(new Dimension(225,HEIGHT));
+	/*	panel2 = new JPanel();*/
+		panel2 = new Panel2();
+
+		panel2.setPreferredSize(new Dimension(200,HEIGHT));
 		panel2.setLayout(null);
 	
 		frame.add(panel1,BorderLayout.CENTER);
@@ -63,10 +65,10 @@ public class Canvas {
 		img = new BufferedImage(panel1.getWidth(),panel1.getHeight(), BufferedImage.TYPE_INT_RGB);
 		camera = new Camera();
 		
-	/*	solid.add(new Curve(0));
+	solid.add(new Curve(0));
 		solid.add(new Curve(1));
 		solid.add(new Curve(2));
-		*/
+		
 		solid.add(new XYZ());
 		solid.add(new Cube());
 		solid.add(new Pyramid());
@@ -84,7 +86,7 @@ public class Canvas {
 			@Override
 			public void mouseReleased(MouseEvent e){
 				super.mouseReleased(e);
-			
+			System.out.println(camera.getAzimuth() + " " + camera.getZenith());
 			}
 
 		};
@@ -92,8 +94,9 @@ public class Canvas {
 		MouseMotionListener mb = new MouseMotionListener(){
 			@Override
 			public void mouseDragged(MouseEvent e) {
-				camera=camera.addAzimuth((Math.PI / 1000) * (beginX - e.getX()));
-				camera=camera.addZenith((Math.PI / 1000) * (beginY - e.getY()));
+				camera=camera.addAzimuth((beginX - e.getX())*(Math.PI / 1000));
+				camera=camera.addZenith((beginY - e.getY())*(Math.PI / 1000));
+				
 				beginX = e.getX();
 				beginY = e.getY();
 				
@@ -114,39 +117,84 @@ public class Canvas {
 			public void keyPressed(KeyEvent e) {
 				switch(e.getKeyCode()){
 
-					case KeyEvent.VK_UP: camera=camera.forward(0.1); break;
-					case KeyEvent.VK_DOWN: camera=camera.backward(0.1); break;
-					case KeyEvent.VK_LEFT: camera=camera.left(0.1); break;
-					case KeyEvent.VK_RIGHT: camera=camera.right(0.1); break;
-					case KeyEvent.VK_SPACE : camera=camera.withFirstPerson(!camera.getFirstPerson()); break;
-				
-					case KeyEvent.VK_A: moveX = moveX-0.1; break;
-					case KeyEvent.VK_D: moveX = moveX+0.1; break;
-					case KeyEvent.VK_W: moveY = moveY-0.1; break;
-					case KeyEvent.VK_S: moveY = moveY+0.1; break;
-					case KeyEvent.VK_Q: moveZ = moveZ-0.1; break;
-					case KeyEvent.VK_E: moveZ = moveZ+0.1; break;
-				
-					case KeyEvent.VK_NUMPAD4: rotX = rotX+0.1; break;
-					case KeyEvent.VK_NUMPAD6: rotX = rotX-0.1; break;
-					case KeyEvent.VK_NUMPAD8: rotY = rotY+0.1; break;
-					case KeyEvent.VK_NUMPAD2: rotY = rotY-0.1; break;
-					case KeyEvent.VK_NUMPAD7: rotZ = rotZ+0.1; break;
-					case KeyEvent.VK_NUMPAD9: rotZ = rotZ-0.1; break;
-					
-			
-					
-					
-					//	case KeyEvent.VK_sADD: sizeX = sizeX+0.1; sizeY = sizeY+0.1; sizeZ = sizeZ+0.1; break;
-				//	case 109: sizeX = sizeX-0.1; sizeY = sizeY-0.1; sizeZ = sizeZ-0.1; break;
+					case KeyEvent.VK_UP: 
+							camera=camera.forward(0.1); 
+							break;
+					case KeyEvent.VK_DOWN: 
+							camera=camera.backward(0.1); 
+							break;
+					case KeyEvent.VK_LEFT: 
+							camera=camera.left(0.1); 
+							break;
+					case KeyEvent.VK_RIGHT: 
+							camera=camera.right(0.1); 
+							break;
+					case KeyEvent.VK_SPACE : 
+							camera=camera.withFirstPerson(!camera.getFirstPerson()); 
+							break;
+					case KeyEvent.VK_A: 
+							moveX += 0.1; 
+							break;
+					case KeyEvent.VK_D: 
+							moveX -= 0.1; 
+							break;
+					case KeyEvent.VK_W: 
+							moveY += 0.1; 
+							break;
+					case KeyEvent.VK_S: 
+							moveY -=0.1; 
+							break;
+					case KeyEvent.VK_Q: 
+							moveZ -=0.1; 
+							break;
+					case KeyEvent.VK_E:
+							moveZ += 0.1; 
+							break;
+					case KeyEvent.VK_NUMPAD1: 
+							rotX += 0.1; 
+							break;
+					case KeyEvent.VK_NUMPAD3: 
+							rotX -= 0.1; 
+							break;
+					case KeyEvent.VK_NUMPAD4: 
+							rotY += 0.1; 
+							break;
+					case KeyEvent.VK_NUMPAD6: 
+							rotY -= 0.1; 
+							break;
+					case KeyEvent.VK_NUMPAD7:
+							rotZ += 0.1; 
+							break;
+					case KeyEvent.VK_NUMPAD9: 
+							rotZ -= 0.1; 
+							break;
+					case KeyEvent.VK_P: 
+							renderer.setProj(new Mat4PerspRH(1, 1, 1, 100)); 
+							break;
+					case KeyEvent.VK_O: 
+							renderer.setProj(new Mat4OrthoRH(8, 10.0 * HEIGHT / WIDTH, 1, 40)); 
+							break;
+					case KeyEvent.VK_R: 
+							reset(); 
+							break;
+					case KeyEvent.VK_ADD:
+							sizeX += 0.1; 
+							sizeY += 0.1; 
+							sizeZ += 0.1; 
+							break;
+					case KeyEvent.VK_SUBTRACT:
+							sizeX -= 0.1;
+							sizeY -= 0.1; 
+							sizeZ-=0.1; 
+							break;
+						
+						
+						
+						
+						//	case KeyEvent.VK_sADD: sizeX = sizeX+0.1; sizeY = sizeY+0.1; sizeZ = sizeZ+0.1; break;
+						//	case 109: sizeX = sizeX-0.1; sizeY = sizeY-0.1; sizeZ = sizeZ-0.1; break;
 
 
-					//perspektivni
-					case KeyEvent.VK_Y: renderer.setProj(new Mat4PerspRH(1, 1, 1, 100)); break;
-					//paralelni
-					case KeyEvent.VK_X: renderer.setProj(new Mat4OrthoRH(8, 10.0 * HEIGHT / WIDTH, 1, 40)); break;
-					
-					case KeyEvent.VK_R: reset(); break;
 				}
 				renderFrame(solid);
 			}
@@ -172,7 +220,7 @@ public class Canvas {
 	}
 	private void reset(){
 		rotX = Math.PI / 2; rotY = 0; rotZ = Math.PI;
-		sizeX = 2; sizeY = 2; sizeZ = 2;
+		sizeX = 3; sizeY = 3; sizeZ = 3;
 		moveX = -5; moveY = -1.5; moveZ = -1.5;
 		renderer.setProj(new Mat4PerspRH(1, 1, 1, 100));
 		setCameraOptions();
@@ -185,11 +233,12 @@ public class Canvas {
 //		camera = new Camera(new Vec3D(0,0,0), 0,0, Math.PI/2, true);
 		camera = new Camera(new Vec3D(0,0,0), Math.PI/32,Math.PI/16, Math.PI/2, true);
 	//	camera=camera.withPosition(new Vec3D(5,0,0));
-//	camera=camera.addAzimuth(2.80);
+		camera=camera.withAzimuth(0.03926990816987217);
+		camera=camera.withZenith(0.006283185307179653);
+	
 		//(new Vec3D(5, 3.5, 1.5));
-	//	camera=camera.withZenith(Math.PI);
+	//	camera=camera.addZenith(Math.PI);
 	//	camera=camera.withPosition(new Vec3D(8, 3.5, 1.5));
-		//camera=camera.backward(5);
 	}
 	
 	
